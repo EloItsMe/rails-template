@@ -6,8 +6,12 @@ run "unzip stylesheets.zip -d app/assets && rm -f stylesheets.zip"
 run "mv app/assets/rails-stylesheet-structure-release app/assets/stylesheets"
 ########################################
 
-# Test Framework
+# Gemfile
 ########################################
+gem_group :development do
+  gem "letter_opener"
+end
+
 gem_group :development, :test do
   gem "dotenv-rails"
   gem 'rspec-rails'
@@ -21,7 +25,16 @@ gem_group :test do
   gem 'simplecov', require: false
 end
 
+
 after_bundle do
+  insert_into_file 'config/evironments/development.rb', after: "config.action_mailer.raise_delivery_errors = false" do
+    <<~RUBY
+      config.action_mailer.delivery_method = :letter_opener
+      config.action_mailer.perform_deliveries = true
+      config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
+    RUBY
+  end
+
   generate "rspec:install"
 
   gsub_file 'spec/rails_helper.rb', 'config.use_transactional_fixtures = true', 'config.use_transactional_fixtures = false'
