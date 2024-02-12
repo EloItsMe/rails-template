@@ -10,6 +10,7 @@ run "mv app/assets/rails-stylesheet-structure-release app/assets/stylesheets"
 ########################################
 gem_group :development do
   gem "letter_opener"
+  gem "bullet"
 end
 
 gem_group :development, :test do
@@ -34,6 +35,14 @@ after_bundle do
       config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
     RUBY
   end
+
+  generate "bullet:install"
+
+  gsub_file 'config/environments/developement.rb', 'Bullet.bullet_logger = true', 'Bullet.bullet_logger = false'
+  gsub_file 'config/environments/developement.rb', 'Bullet.console       = true', 'Bullet.console       = false'
+  gsub_file 'config/environments/developement.rb', 'Bullet.rails_logger  = true', 'Bullet.rails_logger  = false'
+  gsub_file 'config/environments/developement.rb', 'Bullet.add_footer    = true', 'Bullet.add_footer    = false'
+  gsub_file 'config/environments/test.rb', 'Bullet.bullet_logger = true', 'Bullet.bullet_logger = false'
 
   generate "rspec:install"
 
