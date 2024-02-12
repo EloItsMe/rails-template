@@ -23,5 +23,57 @@ end
 
 after_bundle do
   generate "rspec:install"
+
+  insert_into_file 'spec/rails_helper.rb', after: "# Add additional requires below this line. Rails is not loaded until this point!\n" do
+    <<~RUBY
+      Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
+    RUBY
+  end
+  create_file 'spec/support/factory_bot.rb' do
+    <<~RUBY
+      RSpec.configure do |config|
+        config.include FactoryBot::Syntax::Methods
+      end
+    RUBY
+  end
+
+  create_file 'spec/support/database_cleaner.rb' do
+    <<~RUBY
+      RSpec.configure do |config|
+        config.before(:suite) do
+          DatabaseCleaner.clean_with :truncation, except: %w(ar_internal_metadata)
+        end
+
+        config.before(:each) do
+          DatabaseCleaner.strategy = :transaction
+        end
+
+        config.before(:each) do
+          DatabaseCleaner.start
+        end
+
+        config.after(:each) do
+          DatabaseCleaner.clean
+        end
+      end
+    RUBY
+  end
+
+  create_file 'spec/support/shoulda_matchers.rb' do
+    <<~RUBY
+      Shoulda::Matchers.configure do |config|
+        config.integrate do |with|
+          with.test_framework :rspec
+          with.library :rails
+        end
+      end
+    RUBY
+  end
+
+  create_file 'spec/support/simplecov.rb' do
+    <<~RUBY
+      SimpleCov.start 'rails'
+    RUBY
+  end
 end
 ########################################
