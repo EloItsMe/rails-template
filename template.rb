@@ -11,6 +11,7 @@ run "mv app/assets/rails-stylesheet-structure-release app/assets/stylesheets"
 gem_group :development do
   gem "letter_opener"
   gem "bullet"
+  gem 'brakeman'
 end
 
 gem_group :development, :test do
