@@ -24,7 +24,7 @@ end
 after_bundle do
   generate "rspec:install"
 
-  replace_in_file 'spec/rails_helper.rb', "# Remove this line if you're not using ActiveRecord or ActiveRecord fixtures\nconfig.fixture_paths = [\nRails.root.join('spec/fixtures')\n]", ""
+  gsub_file 'spec/rails_helper.rb', 'config.use_transactional_fixtures = true', 'config.use_transactional_fixtures = false'
 
   insert_into_file 'spec/rails_helper.rb', after: "# Add additional requires below this line. Rails is not loaded until this point!\n" do
     <<~RUBY
