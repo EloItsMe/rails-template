@@ -24,6 +24,8 @@ end
 after_bundle do
   generate "rspec:install"
 
+  replace_in_file 'spec/rails_helper.rb', "# Remove this line if you're not using ActiveRecord or ActiveRecord fixtures\nconfig.fixture_paths = [\nRails.root.join('spec/fixtures')\n]", ""
+
   insert_into_file 'spec/rails_helper.rb', after: "# Add additional requires below this line. Rails is not loaded until this point!\n" do
     <<~RUBY
       Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
@@ -72,6 +74,7 @@ after_bundle do
 
   create_file 'spec/support/simplecov.rb' do
     <<~RUBY
+      require 'simplecov'
       SimpleCov.start 'rails'
     RUBY
   end
