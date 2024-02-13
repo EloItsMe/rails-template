@@ -61,7 +61,7 @@ after_bundle do
     YAML
   end
 
-  insert_into_file 'config/environments/development.rb', after: "class ApplicationController < ActionController::Base\n" do
+  insert_into_file 'config/environments/development.rb' do
     <<~RUBY
       Rails.application.configure do
         config.generators.after_generate do |files|
