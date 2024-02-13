@@ -27,10 +27,30 @@ gem_group :test do
   gem 'database_cleaner-active_record'
   gem 'simplecov', require: false
 end
+
+gem "pundit"
 ########################################
 
 
 after_bundle do
+  generate "pundit:install"
+
+  insert_into_file 'app/controllers/application_controller.rb', after: "class ApplicationController < ActionController::Base\n" do
+    <<~RUBY
+      include Pundit::Authorization
+      after_action :verify_authorized, except: :index
+      after_action :verify_policy_scoped, only: :index
+    RUBY
+  end
+
+  create_file 'config/locales/pundit/en.yml' do
+    <<~YAML
+      en:
+        pundit:
+          default: "You are not allowed to perform this action."
+    YAML
+  end
+
   insert_into_file 'config/environments/development.rb', after: "config.action_mailer.raise_delivery_errors = false" do
     <<~RUBY
       \n
