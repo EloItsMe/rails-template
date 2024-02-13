@@ -48,7 +48,7 @@ after_bundle do
   gsub_file 'config/environments/test.rb', 'Bullet.bullet_logger = true', 'Bullet.bullet_logger = false'
 
   generate "annotate:install"
-  gsub_file "'exclude_fixtures'            => 'false'","'exclude_fixtures'            => 'true'"
+  # gsub_file "'exclude_fixtures'            => 'false'","'exclude_fixtures'            => 'true'"
 
   generate "rspec:install"
 
