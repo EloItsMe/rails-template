@@ -12,6 +12,7 @@ gem_group :development do
   gem "letter_opener"
   gem "bullet"
   gem 'brakeman'
+  gem 'annotate'
 end
 
 gem_group :development, :test do
@@ -26,6 +27,7 @@ gem_group :test do
   gem 'database_cleaner-active_record'
   gem 'simplecov', require: false
 end
+########################################
 
 
 after_bundle do
@@ -45,8 +47,11 @@ after_bundle do
   gsub_file 'config/environments/developement.rb', 'Bullet.add_footer    = true', 'Bullet.add_footer    = false'
   gsub_file 'config/environments/test.rb', 'Bullet.bullet_logger = true', 'Bullet.bullet_logger = false'
 
-  generate "rspec:install"
+  generate "annotate:install"
+  gsub_file "'exclude_fixtures'            => 'false'","'exclude_fixtures'            => 'true'",
 
+
+  generate "rspec:install"
   gsub_file 'spec/rails_helper.rb', 'config.use_transactional_fixtures = true', 'config.use_transactional_fixtures = false'
 
   insert_into_file 'spec/rails_helper.rb', after: "# Add additional requires below this line. Rails is not loaded until this point!\n" do
@@ -102,4 +107,3 @@ after_bundle do
     RUBY
   end
 end
-########################################
