@@ -51,6 +51,7 @@ after_bundle do
   # gsub_file "'exclude_fixtures'            => 'false'","'exclude_fixtures'            => 'true'"
 
   generate "rspec:install"
+
   gsub_file 'spec/rails_helper.rb', 'config.use_transactional_fixtures = true', 'config.use_transactional_fixtures = false'
 
   insert_into_file 'spec/rails_helper.rb', after: "# Add additional requires below this line. Rails is not loaded until this point!\n" do
