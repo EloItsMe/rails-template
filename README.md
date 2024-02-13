@@ -63,7 +63,3 @@ You can use this template for start every new Ruby on Rails project
 ## Authors
 
 * **EloItsMe** - *Developer at Drakkar* - [EloItsMe](https://github.com/EloItsMe/) - *Creator*
-
-* []()
-* []()
-* []()
