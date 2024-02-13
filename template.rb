@@ -31,6 +31,11 @@ end
 
 
 after_bundle do
+  # environment 'config.action_mailer.delivery_method = :letter_opener', env: 'development'
+  # environment 'config.action_mailer.perform_deliveries = true', env: 'development'
+  # environment 'config.action_mailer.default_url_options = { host: "localhost", port: 3000 }', env: 'development'
+
+
   insert_into_file 'config/environments/development.rb', after: "config.action_mailer.raise_delivery_errors = false" do
     <<~RUBY
       config.action_mailer.delivery_method = :letter_opener
@@ -48,7 +53,7 @@ after_bundle do
   gsub_file 'config/environments/test.rb', 'Bullet.bullet_logger = true', 'Bullet.bullet_logger = false'
 
   generate "annotate:install"
-  gsub_file "'exclude_fixtures'            => 'false'","'exclude_fixtures'            => 'true'"
+  gsub_file "lib/tasks/auto_annotate_models.rake", "'exclude_fixtures'            => 'false'", "'exclude_fixtures'            => 'true'"
 
   generate "rspec:install"
 
