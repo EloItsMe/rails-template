@@ -31,7 +31,7 @@ end
 
 
 after_bundle do
-  insert_into_file 'config/environments/development.rb', after: "config.action_mailer.raise_delivery_errors = false\n" do
+  insert_into_file 'config/environments/development.rb', after: "config.action_mailer.raise_delivery_errors = false\n\n" do
     <<~RUBY
       config.action_mailer.delivery_method = :letter_opener
       config.action_mailer.perform_deliveries = true
