@@ -155,4 +155,6 @@ after_bundle do
       SimpleCov.start 'rails'
     RUBY
   end
+
+  run "rubocop -A"
 end
