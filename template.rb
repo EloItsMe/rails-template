@@ -20,6 +20,10 @@ gem_group :development, :test do
   gem 'rspec-rails'
   gem 'factory_bot_rails'
   gem 'faker'
+  gem 'rubocop-rails'
+  gem 'rubocop-rspec'
+  gem 'rubocop-performance'
+  gem 'rubocop-factory_bot'
 end
 
 gem_group :test do
@@ -33,6 +37,43 @@ gem "pundit"
 
 
 after_bundle do
+  create_file '.rubocop.yml' do
+    <<~YAML
+      require:
+      - rubocop-rails
+      - rubocop-performance
+      - rubocop-rspec
+      - rubocop-factory_bot
+
+      AllCops:
+        NewCops: enable
+        Exclude:
+          - 'bin/**/*'
+          - 'lib/**/*'
+          - 'config/**/*'
+
+      Style/Documentation:
+        Enabled: false
+      Style/EmptyMethod:
+        Enabled: false
+      Bundler/OrderedGems:
+        Enabled: false
+    YAML
+  end
+
+  insert_into_file 'config/environments/development.rb', after: "class ApplicationController < ActionController::Base\n" do
+    <<~RUBY
+      Rails.application.configure do
+        config.generators.after_generate do |files|
+          parsable_files = files.filter { |file| file.end_with?('.rb') }
+          unless parsable_files.empty?
+            system("bundle exec rubocop -A --fail-level=E #{parsable_files.shelljoin}", exception: true)
+          end
+        end
+      end
+    RUBY
+  end
+
   generate "pundit:install"
 
   insert_into_file 'app/controllers/application_controller.rb', after: "class ApplicationController < ActionController::Base\n" do
