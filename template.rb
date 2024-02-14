@@ -1,73 +1,74 @@
-# Stylesheets
-########################################
-run 'rm -rf app/assets/stylesheets'
-run "curl -L https://github.com/EloItsMe/rails-stylesheet-structure/archive/refs/tags/release.zip > stylesheets.zip"
-run "unzip stylesheets.zip -d app/assets && rm -f stylesheets.zip"
-run "mv app/assets/rails-stylesheet-structure-release app/assets/stylesheets"
-########################################
-
-# Gemfile
-########################################
-gem_group :development do
-  gem "letter_opener"
-  gem "bullet"
-  gem 'brakeman'
-  gem 'annotate'
-end
-
-gem_group :development, :test do
-  gem "dotenv-rails"
-  gem 'rspec-rails'
-  gem 'factory_bot_rails'
-  gem 'faker'
-  gem 'rubocop-rails'
-  gem 'rubocop-rspec'
-  gem 'rubocop-performance'
-  gem 'rubocop-factory_bot'
-end
-
-gem_group :test do
-  gem 'shoulda-matchers'
-  gem 'database_cleaner-active_record'
-  gem 'simplecov', require: false
-end
-
-gem "pundit"
-########################################
-
-
 after_bundle do
-  create_file '.rubocop.yml' do
-    <<~YAML
-      require:
-      - rubocop-rails
-      - rubocop-performance
-      - rubocop-rspec
-      - rubocop-factory_bot
+  # Stylesheets
+  ########################################
+  run 'rm -rf app/assets/stylesheets', verbose: false
+  run "curl -L https://github.com/EloItsMe/rails-stylesheet-structure/archive/refs/tags/release.zip > stylesheets.zip", verbose: false
+  run "unzip stylesheets.zip -d app/assets && rm -f stylesheets.zip", verbose: false
+  run "mv app/assets/rails-stylesheet-structure-release app/assets/stylesheets", verbose: false
+  ########################################
 
-      AllCops:
-        NewCops: enable
-        Exclude:
-          - 'bin/**/*'
-          - 'lib/**/*'
-          - 'config/**/*'
+# Rubocop
+  ########################################
+    # Add rubocop to the Gemfile
+    # ----------------------------------------
+    run "bundle add rubocop-rails --group 'development test'", verbose: false
+    run "bundle add rubocop-rspec --group 'development test'", verbose: false
+    run "bundle add rubocop-performance --group 'development test'", verbose: false
+    run "bundle add rubocop-factory_bot --group 'development test'", verbose: false
+    # ----------------------------------------
+    # Create the .rubocop.yml file
+    # ----------------------------------------
+      create_file '.rubocop.yml' do
+        <<~YAML
+          require:
+          - rubocop-rails
+          - rubocop-performance
+          - rubocop-rspec
+          - rubocop-factory_bot
 
-      Style/Documentation:
-        Enabled: false
-      Style/EmptyMethod:
-        Enabled: false
-      Bundler/OrderedGems:
-        Enabled: false
-    YAML
-  end
+          AllCops:
+            NewCops: enable
+            Exclude:
+              - 'bin/**/*'
+              - 'lib/**/*'
+              - 'config/**/*'
+
+          Style/Documentation:
+            Enabled: false
+          Style/EmptyMethod:
+            Enabled: false
+          Bundler/OrderedGems:
+            Enabled: false
+        YAML
+      end
+    # ----------------------------------------
+  ########################################
+
+
+  run "bundle add pundit"
+
+  run "bundle add letter_opener --group development"
+  run "bundle add bullet --group development"
+  run "bundle add brakeman --group development"
+  run "bundle add annotate --group development"
+
+  run "bundle add dotenv-rails --group 'development test'"
+  run "bundle add rspec-rails --group 'development test'"
+  run "bundle add factory_bot_rails --group 'development test'"
+  run "bundle add faker --group 'development test'"
+
+
+  run "bundle add shoulda-matchers --group test"
+  run "bundle add database_cleaner-active_record --group test"
+  run "bundle add simplecov --group test"
+
+
 
   generate "pundit:install"
 
   insert_into_file 'app/controllers/application_controller.rb', after: "class ApplicationController < ActionController::Base\n" do
     <<~RUBY
       include Pundit::Authorization
-      after_action :verify_authorized, except: :index
-      after_action :verify_policy_scoped, only: :index
     RUBY
   end
 
