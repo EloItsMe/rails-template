@@ -13,7 +13,7 @@ def install_rubocop
   run "bundle add rubocop-factory_bot --group 'development test'"
 end
 
-def rubocop_config
+def config_rubocop
   create_file '.rubocop.yml' do
     <<~YAML
       require:
@@ -27,7 +27,7 @@ def rubocop_config
         Exclude:
           - 'bin/**/*'
           - 'lib/**/*'
-          - 'config/**/*'
+          - 'config/environments/*'
 
       Style/Documentation:
         Enabled: false
@@ -74,7 +74,6 @@ def config_bullet
   gsub_file 'config/environments/development.rb', 'Bullet.console       = true', 'Bullet.console       = false'
   gsub_file 'config/environments/development.rb', 'Bullet.rails_logger  = true', 'Bullet.rails_logger  = false'
   gsub_file 'config/environments/development.rb', 'Bullet.add_footer    = true', 'Bullet.add_footer    = false'
-  gsub_file 'config/environments/test.rb', 'Bullet.bullet_logger = true', 'Bullet.bullet_logger = false'
 end
 
 def install_rspec
@@ -83,12 +82,7 @@ def install_rspec
 end
 
 def config_rspec
-  gsub_file 'spec/rails_helper.rb', 'config.use_transactional_fixtures = true', 'config.use_transactional_fixtures = false'
-  insert_into_file 'spec/rails_helper.rb', after: "# Add additional requires below this line. Rails is not loaded until this point!\n" do
-    <<~RUBY
-      Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
-    RUBY
-  end
+  gsub_file 'spec/rails_helper.rb', "# Rails.root.glob('spec/support/**/*.rb').sort.each { |f| require f }", "Rails.root.glob('spec/support/**/*.rb').sort.each { |f| require f }"
 end
 
 def install_factory_bot
@@ -98,6 +92,8 @@ end
 def config_factory_bot
   create_file 'spec/support/factory_bot.rb' do
     <<~RUBY
+      require 'factory_bot'
+
       RSpec.configure do |config|
         config.include FactoryBot::Syntax::Methods
       end
@@ -196,6 +192,64 @@ def install_dotenv
   create_file '.env'
 end
 
+def install_view_component
+  run "bundle add view_component"
+end
+
+def config_view_component
+  insert_into_file 'config/initializers/assets.rb', after: "# Add additional assets to the asset load path.\n" do <<~RUBY
+    Rails.application.config.assets.paths << Rails.root.join("app/components")
+  RUBY
+  end
+
+  insert_into_file 'app/assets/config/manifest.js', after: "//= link_tree ../../javascript .js\n" do <<~JS
+    //= link_tree ../../components .js
+  JS
+  end
+
+  insert_into_file 'app/javascript/controllers/index.js', after: `eagerLoadControllersFrom("controllers", application)\n` do <<~RUBY
+    eagerLoadControllersFrom("components", application)
+  RUBY
+  end
+
+  insert_into_file 'config/application.rb', after: "class Application < Rails::Application\n" do <<~RUBY
+    config.view_component.generate.preview = true
+    config.view_component.preview_paths << "spec/components/previews"
+  RUBY
+  end
+
+  run "mkdir app/components"
+end
+
+def install_lookbook
+  run "bundle add lookbook --group development"
+end
+
+def config_lookbook
+  insert_into_file 'config/routes.rb', after: "Rails.application.routes.draw do\n" do <<~RUBY
+    if Rails.env.development?
+      mount Lookbook::Engine, at: "/components"
+    end
+  RUBY
+  end
+end
+
+def config_generators
+  insert_into_file 'config/application.rb', after: "class Application < Rails::Application\n" do <<~RUBY
+    config.generators do |generate|
+      generate.test_framework :rspec
+      generate.fixture_replacement :factory_bot, dir: "spec/factories"
+    end
+  RUBY
+  end
+end
+
+def init_db
+  rails_command "db:create"
+  rails_command "db:migrate"
+  rails_command "db:seed"
+end
+
 def  init_git
   git :init
   git add: "."
@@ -208,7 +262,7 @@ after_bundle do
 
   # Linter
   install_rubocop
-  rubocop_config
+  config_rubocop
 
   # Security
   install_pundit
@@ -230,6 +284,9 @@ after_bundle do
   config_simplecov
   install_faker
 
+  # Generators
+  config_generators
+
   # Admin
 
   # Utilities
@@ -238,7 +295,10 @@ after_bundle do
   install_annotate
   config_annotate
   install_dotenv
+  install_view_component
+  config_view_component
 
   run "rubocop -A"
+  init_db
   init_git
 end
