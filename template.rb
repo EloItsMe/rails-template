@@ -1,7 +1,7 @@
 REPO = "https://raw.githubusercontent.com/EloItsMe/rails-template/master"
 
 def set_up_stylesheets
-  run 'rm -rf app/assets/stylesheets'
+  remove_dir 'app/assets/stylesheets'
   run "curl -L 'https://github.com/EloItsMe/rails-stylesheet-structure/archive/refs/tags/release.zip' > stylesheets.zip"
   run "unzip stylesheets.zip && rm stylesheets.zip"
   run "mv rails-stylesheet-structure-release app/assets/stylesheets"
@@ -16,7 +16,7 @@ def install_rubocop
 end
 
 def config_rubocop
-  run "curl -L #{REPO + "/.rubocop.yml"} > .rubocop.yml"
+  run "curl -L #{REPO + "/template/.rubocop.yml"} > .rubocop.yml"
 
   create_file 'config/initializers/rubocop.rb' do <<~RUBY
     if Rails.env.development?
@@ -46,14 +46,6 @@ def pundit_config
       include Pundit::Authorization
     RUBY
   end
-
-  create_file 'config/locales/pundit/en.yml' do
-    <<~YAML
-      en:
-        pundit:
-          default: "You are not allowed to perform this action."
-    YAML
-  end
 end
 
 def install_brakeman
@@ -65,19 +57,7 @@ def install_bullet
 end
 
 def config_bullet
-  create_file 'config/initializers/bullet.rb' do <<~RUBY
-    if Rails.env.development?
-      Rails.application.config.after_initialize do
-        Bullet.enable        = true
-        Bullet.alert         = true
-        Bullet.bullet_logger = false
-        Bullet.console       = false
-        Bullet.rails_logger  = false
-        Bullet.add_footer    = false
-      end
-    end
-  RUBY
-  end
+  run "curl -L #{REPO + '/template/config/initializers/bullet.rb'} > config/initializers/bullet.rb"
 end
 
 def install_rspec
@@ -105,13 +85,7 @@ def install_factory_bot
 end
 
 def config_factory_bot
-  create_file 'spec/support/factory_bot.rb' do
-    <<~RUBY
-      RSpec.configure do |config|
-        config.include FactoryBot::Syntax::Methods
-      end
-    RUBY
-  end
+  run "curl -L #{REPO + '/template/spec/support/factory_bot.rb'} > spec/support/factory_bot.rb"
 end
 
 def install_shoulda_matchers
@@ -119,16 +93,7 @@ def install_shoulda_matchers
 end
 
 def config_shoulda_matchers
-  create_file 'spec/support/shoulda_matchers.rb' do
-    <<~RUBY
-      Shoulda::Matchers.configure do |config|
-        config.integrate do |with|
-          with.test_framework :rspec
-          with.library :rails
-        end
-      end
-    RUBY
-  end
+  run "curl -L #{REPO + '/template/spec/support/shoulda_matchers.rb'} > spec/support/shoulda_matchers.rb"
 end
 
 def install_database_cleaner
@@ -136,27 +101,7 @@ def install_database_cleaner
 end
 
 def config_database_cleaner
-  create_file 'spec/support/database_cleaner.rb' do
-    <<~RUBY
-      RSpec.configure do |config|
-        config.before(:suite) do
-          DatabaseCleaner.clean_with :truncation, except: %w(ar_internal_metadata)
-        end
-
-        config.before(:each) do
-          DatabaseCleaner.strategy = :transaction
-        end
-
-        config.before(:each) do
-          DatabaseCleaner.start
-        end
-
-        config.after(:each) do
-          DatabaseCleaner.clean
-        end
-      end
-    RUBY
-  end
+  run "curl -L #{REPO + '/template/spec/support/database_cleaner.rb'} > spec/support/database_cleaner.rb"
 end
 
 def install_simplecov
@@ -164,12 +109,7 @@ def install_simplecov
 end
 
 def config_simplecov
-  create_file 'spec/support/simplecov.rb' do
-    <<~RUBY
-      require 'simplecov'
-      SimpleCov.start 'rails'
-    RUBY
-  end
+  run "curl -L #{REPO + '/template/spec/support/simplecov.rb'} > spec/support/simplecov.rb"
 end
 
 def install_faker
@@ -210,14 +150,7 @@ def install_view_component
 end
 
 def config_view_component
-  create_file 'config/initializers/view_component.rb' do <<~RUBY
-    if Rails.env.development?
-      Rails.application.config.view_component.generate.preview = true
-      Rails.application.config.view_component.preview_paths << "spec/components/previews"
-    end
-  RUBY
-  end
-
+  run "curl -L #{REPO + "/template/config/initializers/view_component.rb"} > config/initializers/view_component.rb"
 
   insert_into_file 'config/initializers/assets.rb', after: "# Add additional assets to the asset load path.\n" do <<~RUBY
     Rails.application.config.assets.paths << Rails.root.join("app/components")
@@ -256,8 +189,8 @@ def install_simple_form
 end
 
 def config_simple_form
-  rm "config/initializers/simple_form.rb"
-  run "curl -L #{REPO + "simple_form.rb"} > config/initializers/simple_form.rb"
+  remove_file "config/initializers/simple_form.rb"
+  run "curl -L #{REPO + "/simple_form.rb"} > config/initializers/simple_form.rb"
 end
 
 def init_db
