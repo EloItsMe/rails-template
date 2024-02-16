@@ -6,11 +6,11 @@ def set_up_stylesheets
 end
 
 def install_rubocop
-  run "bundle add rubocop --group 'development test'"
-  run "bundle add rubocop-rails --group 'development test'"
-  run "bundle add rubocop-rspec --group 'development test'"
-  run "bundle add rubocop-performance --group 'development test'"
-  run "bundle add rubocop-factory_bot --group 'development test'"
+  run "bundle add rubocop --group 'development, test'"
+  run "bundle add rubocop-rails --group 'development, test'"
+  run "bundle add rubocop-rspec --group 'development, test'"
+  run "bundle add rubocop-performance --group 'development, test'"
+  run "bundle add rubocop-factory_bot --group 'development, test'"
 end
 
 def config_rubocop
@@ -21,7 +21,6 @@ def config_rubocop
       - rubocop-performance
       - rubocop-rspec
       - rubocop-factory_bot
-
       AllCops:
         NewCops: enable
         Exclude:
@@ -77,7 +76,7 @@ def config_bullet
 end
 
 def install_rspec
-  run "bundle add rspec-rails --group 'development test'"
+  run "bundle add rspec-rails --group 'development, test'"
   generate "rspec:install"
 end
 
@@ -85,15 +84,24 @@ def config_rspec
   gsub_file 'spec/rails_helper.rb', "# Rails.root.glob('spec/support/**/*.rb').sort.each { |f| require f }", "Rails.root.glob('spec/support/**/*.rb').sort.each { |f| require f }"
 end
 
+def install_capybara
+  run "bundle add capybara --group test"
+end
+
+def config_capbyara
+  insert_into_file 'spec/rails_helper.rb', after: "require 'rspec/rails'\n" do <<~RUBY
+    require 'capybara/rails'
+  RUBY
+  end
+end
+
 def install_factory_bot
-  run "bundle add factory_bot_rails --group 'development test'"
+  run "bundle add factory_bot_rails --group 'development, test'"
 end
 
 def config_factory_bot
   create_file 'spec/support/factory_bot.rb' do
     <<~RUBY
-      require 'factory_bot'
-
       RSpec.configure do |config|
         config.include FactoryBot::Syntax::Methods
       end
@@ -160,7 +168,7 @@ def config_simplecov
 end
 
 def install_faker
-  run "bundle add faker --group 'development test'"
+  run "bundle add faker --group 'development, test'"
 end
 
 def install_letter_opener
@@ -188,7 +196,7 @@ def config_annotate
 end
 
 def install_dotenv
-  run "bundle add dotenv-rails --group 'development test'"
+  run "bundle add dotenv-rails --group 'development, test'"
   create_file '.env'
 end
 
@@ -274,6 +282,7 @@ after_bundle do
   # Testing
   install_rspec
   config_rspec
+  install_capybara
   install_factory_bot
   config_factory_bot
   install_shoulda_matchers
