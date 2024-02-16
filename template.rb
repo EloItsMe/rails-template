@@ -4,7 +4,7 @@ def set_up_stylesheets
   run 'rm -rf app/assets/stylesheets'
   run "curl -L 'https://github.com/EloItsMe/rails-stylesheet-structure/archive/refs/tags/release.zip' > stylesheets.zip"
   run "unzip stylesheets.zip && rm stylesheets.zip"
-  run "mv rails-stylesheet-structure app/assets/stylesheets"
+  run "mv rails-stylesheet-structure-release app/assets/stylesheets"
 end
 
 def install_rubocop
