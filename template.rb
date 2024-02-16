@@ -2,9 +2,9 @@ REPO = "https://github.com/EloItsMe/rails-template/blob/master"
 
 def set_up_stylesheets
   run 'rm -rf app/assets/stylesheets'
-  run "curl -L #{REPO + "/stylesheet.zip"} > stylesheets.zip"
+  run "curl -L 'https://github.com/EloItsMe/rails-stylesheet-structure/archive/refs/tags/release.zip' > stylesheets.zip"
   run "unzip stylesheets.zip && rm stylesheets.zip"
-  run "mv stylesheets app/assets/stylesheets"
+  run "mv rails-stylesheet-structure app/assets/stylesheets"
 end
 
 def install_rubocop
