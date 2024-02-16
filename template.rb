@@ -1,8 +1,9 @@
-REPO = "https://github.com/EloItsMe/rails-template/blob/master/README.md"
+REPO = "https://github.com/EloItsMe/rails-template/blob/master"
 
 def set_up_stylesheets
   run 'rm -rf app/assets/stylesheets'
-  run "curl -L #{REPO + "/stylesheet"} > stylesheets"
+  run "curl -L #{REPO + "/stylesheet.zip"} > stylesheets.zip"
+  run "unzip stylesheets.zip && rm stylesheets.zip"
   run "mv stylesheets app/assets/stylesheets"
 end
 
@@ -262,50 +263,50 @@ def  init_git
   git commit: %Q{ -m 'Initial commit' }
 end
 
-# after_bundle do
-#   # Stylesheets
-#   set_up_stylesheets
+after_bundle do
+  # Stylesheets
+  set_up_stylesheets
 
-#   # Linter
-#   install_rubocop
-#   config_rubocop
+  # Linter
+  install_rubocop
+  config_rubocop
 
-#   # Security
-#   install_pundit
-#   pundit_config
-#   install_brakeman
-#   install_bullet
-#   config_bullet
+  # Security
+  install_pundit
+  pundit_config
+  install_brakeman
+  install_bullet
+  config_bullet
 
-#   # Testing
-#   install_rspec
-#   config_rspec
-#   install_capybara
-#   config_capbyara
-#   install_factory_bot
-#   config_factory_bot
-#   install_shoulda_matchers
-#   config_shoulda_matchers
-#   install_database_cleaner
-#   config_database_cleaner
-#   install_simplecov
-#   config_simplecov
-#   install_faker
+  # Testing
+  install_rspec
+  config_rspec
+  install_capybara
+  config_capbyara
+  install_factory_bot
+  config_factory_bot
+  install_shoulda_matchers
+  config_shoulda_matchers
+  install_database_cleaner
+  config_database_cleaner
+  install_simplecov
+  config_simplecov
+  install_faker
 
-#   # Admin
+  # Admin
 
-#   # Utilities
-#   install_letter_opener
-#   config_letter_opener
-#   install_annotate
-#   config_annotate
-#   install_dotenv
-#   install_view_component
-#   config_view_component
-#   install_lookbook
-#   config_lookbook
+  # Utilities
+  install_letter_opener
+  config_letter_opener
+  install_annotate
+  config_annotate
+  install_dotenv
+  install_view_component
+  config_view_component
+  install_lookbook
+  config_lookbook
 
-#   run "rubocop -A"
-#   init_db
-#   init_git
-# end
+  run "rubocop -A"
+  init_db
+  init_git
+end
