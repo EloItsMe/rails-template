@@ -15,29 +15,7 @@ def install_rubocop
 end
 
 def config_rubocop
-  create_file '.rubocop.yml' do
-    <<~YAML
-      require:
-        - rubocop-rails
-        - rubocop-performance
-        - rubocop-rspec
-        - rubocop-factory_bot
-        - rubocop-capybara
-      AllCops:
-        NewCops: enable
-        Exclude:
-          - 'bin/**/*'
-          - 'lib/**/*'
-          - 'config/environments/*'
-
-      Style/Documentation:
-        Enabled: false
-      Style/EmptyMethod:
-        Enabled: false
-      Bundler/OrderedGems:
-        Enabled: false
-    YAML
-  end
+  run "curl -L #{REPO + "/rubocop.yml"} > .rubocop.yml"
 
   create_file 'config/initializers/rubocop.rb' do <<~RUBY
     if Rails.env.development?
