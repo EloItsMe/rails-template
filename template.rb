@@ -26,7 +26,6 @@ def config_rubocop
         Exclude:
           - 'bin/**/*'
           - 'lib/**/*'
-          - 'config/environments/*'
 
       Style/Documentation:
         Enabled: false
@@ -35,6 +34,20 @@ def config_rubocop
       Bundler/OrderedGems:
         Enabled: false
     YAML
+  end
+
+  create_file 'config/initializers/rubocop.rb' do <<~RUBY
+    if Rails.env.development?
+      Rails.application.configure do
+        config.generators.after_generate do |files|
+          parsable_files = files.filter { |file| file.end_with?('.rb') }
+          unless parsable_files.empty?
+            system("bundle exec rubocop -A --fail-level=E #{parsable_files.shelljoin}", exception: true)
+          end
+        end
+      end
+    end
+  RUBY
   end
 end
 
@@ -65,14 +78,22 @@ end
 
 def install_bullet
   run "bundle add bullet --group development"
-  generate "bullet:install"
 end
 
 def config_bullet
-  gsub_file 'config/environments/development.rb', 'Bullet.bullet_logger = true', 'Bullet.bullet_logger = false'
-  gsub_file 'config/environments/development.rb', 'Bullet.console       = true', 'Bullet.console       = false'
-  gsub_file 'config/environments/development.rb', 'Bullet.rails_logger  = true', 'Bullet.rails_logger  = false'
-  gsub_file 'config/environments/development.rb', 'Bullet.add_footer    = true', 'Bullet.add_footer    = false'
+  create_file 'config/initializers/bullet.rb' do <<~RUBY
+    if Rails.env.development?
+      Rails.application.config.after_initialize do
+        Bullet.enable        = true
+        Bullet.alert         = true
+        Bullet.bullet_logger = false
+        Bullet.console       = false
+        Bullet.rails_logger  = false
+        Bullet.add_footer    = false
+      end
+    end
+  RUBY
+  end
 end
 
 def install_rspec
@@ -205,6 +226,15 @@ def install_view_component
 end
 
 def config_view_component
+  create_file 'config/initializers/view_component.rb' do <<~RUBY
+    if Rails.env.development?
+      Rails.application.config.view_component.generate.preview = true
+      Rails.application.config.view_component.preview_paths << "spec/components/previews"
+    end
+  RUBY
+  end
+
+
   insert_into_file 'config/initializers/assets.rb', after: "# Add additional assets to the asset load path.\n" do <<~RUBY
     Rails.application.config.assets.paths << Rails.root.join("app/components")
   RUBY
@@ -220,12 +250,6 @@ def config_view_component
   RUBY
   end
 
-  insert_into_file 'config/application.rb', after: "class Application < Rails::Application\n" do <<~RUBY
-    config.view_component.generate.preview = true
-    config.view_component.preview_paths << "spec/components/previews"
-  RUBY
-  end
-
   run "mkdir app/components"
 end
 
@@ -237,16 +261,6 @@ def config_lookbook
   insert_into_file 'config/routes.rb', after: "Rails.application.routes.draw do\n" do <<~RUBY
     if Rails.env.development?
       mount Lookbook::Engine, at: "/components"
-    end
-  RUBY
-  end
-end
-
-def config_generators
-  insert_into_file 'config/application.rb', after: "class Application < Rails::Application\n" do <<~RUBY
-    config.generators do |generate|
-      generate.test_framework :rspec
-      generate.fixture_replacement :factory_bot, dir: "spec/factories"
     end
   RUBY
   end
@@ -283,6 +297,7 @@ after_bundle do
   install_rspec
   config_rspec
   install_capybara
+  config_capbyara
   install_factory_bot
   config_factory_bot
   install_shoulda_matchers
@@ -292,9 +307,6 @@ after_bundle do
   install_simplecov
   config_simplecov
   install_faker
-
-  # Generators
-  config_generators
 
   # Admin
 
@@ -306,6 +318,8 @@ after_bundle do
   install_dotenv
   install_view_component
   config_view_component
+  install_lookbook
+  config_lookbook
 
   run "rubocop -A"
   init_db
