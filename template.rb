@@ -16,7 +16,7 @@ def install_rubocop
 end
 
 def config_rubocop
-  run "curl -L #{REPO + "/rubocop.yml"} > .rubocop.yml"
+  run "curl -L #{REPO + "/.rubocop.yml"} > .rubocop.yml"
 
   create_file 'config/initializers/rubocop.rb' do <<~RUBY
     if Rails.env.development?
