@@ -1,4 +1,4 @@
-REPO = "https://github.com/EloItsMe/rails-template/blob/master"
+REPO = "https://raw.githubusercontent.com/EloItsMe/rails-template/master"
 
 def set_up_stylesheets
   run 'rm -rf app/assets/stylesheets'
