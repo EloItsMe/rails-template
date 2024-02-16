@@ -267,13 +267,14 @@ def config_lookbook
 end
 
 def init_db
+  rails_command "db:drop"
   rails_command "db:create"
   rails_command "db:migrate"
   rails_command "db:seed"
 end
 
 def  init_git
-  git :init
+  git init: %Q{ -b master }
   git add: "."
   git commit: %Q{ -m 'Initial commit' }
 end
