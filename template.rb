@@ -250,6 +250,16 @@ def config_lookbook
   end
 end
 
+def install_simple_form
+  run "bundle add simple_form"
+  generate "simple_form:install"
+end
+
+def config_simple_form
+  rm "config/initializers/simple_form.rb"
+  run "curl -L #{REPO + "simple_form.rb"} > config/initializers/simple_form.rb"
+end
+
 def init_db
   rails_command "db:drop"
   rails_command "db:create"
@@ -305,6 +315,8 @@ after_bundle do
   config_view_component
   install_lookbook
   config_lookbook
+  install_simple_form
+  config_simple_form
 
   run "rubocop -A"
   init_db
