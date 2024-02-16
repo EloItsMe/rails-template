@@ -17,15 +17,17 @@ def config_rubocop
   create_file '.rubocop.yml' do
     <<~YAML
       require:
-      - rubocop-rails
-      - rubocop-performance
-      - rubocop-rspec
-      - rubocop-factory_bot
+        - rubocop-rails
+        - rubocop-performance
+        - rubocop-rspec
+        - rubocop-factory_bot
+        - rubocop-capybara
       AllCops:
         NewCops: enable
         Exclude:
           - 'bin/**/*'
           - 'lib/**/*'
+          - 'config/environments/*'
 
       Style/Documentation:
         Enabled: false
@@ -42,13 +44,15 @@ def config_rubocop
         config.generators.after_generate do |files|
           parsable_files = files.filter { |file| file.end_with?('.rb') }
           unless parsable_files.empty?
-            system("bundle exec rubocop -A --fail-level=E #{parsable_files.shelljoin}", exception: true)
+            system("bundle exec rubocop -A --fail-level=E {parsable_files.shelljoin}", exception: true)
           end
         end
       end
     end
   RUBY
   end
+  
+  gsub_file 'config/initializers/rubocop.rb', '{parsable_files.shelljoin}', '#{parsable_files.shelljoin}'
 end
 
 def install_pundit
