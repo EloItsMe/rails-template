@@ -67,6 +67,7 @@ end
 
 def config_rspec
   gsub_file 'spec/rails_helper.rb', "# Rails.root.glob('spec/support/**/*.rb').sort.each { |f| require f }", "Rails.root.glob('spec/support/**/*.rb').sort.each { |f| require f }"
+  empty_directory 'spec/support'
 end
 
 def install_capybara
