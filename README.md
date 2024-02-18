@@ -53,6 +53,8 @@ Just run this simple command 🤩
   rails new -d postgresql \
     --css=sass \
     --skip-test \
+    --skip-docker \
+    --javascript=esbuild \
     -m https://raw.githubusercontent.com/EloItsMe/rails-template/master/template.rb \
     YOUR_APP_NAME
 ```

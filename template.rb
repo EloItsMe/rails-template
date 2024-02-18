@@ -153,20 +153,20 @@ end
 def config_view_component
   run "curl -L #{REPO + "/template/config/initializers/view_component.rb"} > config/initializers/view_component.rb"
 
-  insert_into_file 'config/initializers/assets.rb', after: "# Add additional assets to the asset load path.\n" do <<~RUBY
-    Rails.application.config.assets.paths << Rails.root.join("app/components")
-  RUBY
-  end
+  # insert_into_file 'config/initializers/assets.rb', after: "# Add additional assets to the asset load path.\n" do <<~RUBY
+  #   Rails.application.config.assets.paths << Rails.root.join("app/components")
+  # RUBY
+  # end
 
-  insert_into_file 'app/assets/config/manifest.js', after: "//= link_tree ../../javascript .js\n" do <<~JS
-    //= link_tree ../../components .js
-  JS
-  end
+  # insert_into_file 'app/assets/config/manifest.js', after: "//= link_tree ../../javascript .js\n" do <<~JS
+  #   //= link_tree ../../components .js
+  # JS
+  # end
 
-  insert_into_file 'app/javascript/controllers/index.js', after: `eagerLoadControllersFrom("controllers", application)\n` do <<~RUBY
-    eagerLoadControllersFrom("components", application)
-  RUBY
-  end
+  # insert_into_file 'app/javascript/controllers/index.js', after: `eagerLoadControllersFrom("controllers", application)\n` do <<~RUBY
+  #   eagerLoadControllersFrom("components", application)
+  # RUBY
+  # end
 
   run "mkdir app/components"
 end
@@ -191,7 +191,7 @@ end
 
 def config_simple_form
   remove_file "config/initializers/simple_form.rb"
-  run "curl -L #{REPO + "/simple_form.rb"} > config/initializers/simple_form.rb"
+  run "curl -L #{REPO + '/template/config/initializers/simple_form.rb'} > config/initializers/simple_form.rb"
 end
 
 def init_db
