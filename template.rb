@@ -151,23 +151,8 @@ def install_view_component
 end
 
 def config_view_component
-  run "curl -L #{REPO + "/template/config/initializers/view_component.rb"} > config/initializers/view_component.rb"
-
-  # insert_into_file 'config/initializers/assets.rb', after: "# Add additional assets to the asset load path.\n" do <<~RUBY
-  #   Rails.application.config.assets.paths << Rails.root.join("app/components")
-  # RUBY
-  # end
-
-  # insert_into_file 'app/assets/config/manifest.js', after: "//= link_tree ../../javascript .js\n" do <<~JS
-  #   //= link_tree ../../components .js
-  # JS
-  # end
-
-  # insert_into_file 'app/javascript/controllers/index.js', after: `eagerLoadControllersFrom("controllers", application)\n` do <<~RUBY
-  #   eagerLoadControllersFrom("components", application)
-  # RUBY
-  # end
-
+  run "curl -L #{REPO + '/template/config/initializers/view_component.rb'} > config/initializers/view_component.rb"
+  run "curl -L #{REPO + '/template/lib/tasks/stimulus_tasks.rake'} > lib/tasks/stimulus_tasks.rake"
   run "mkdir app/components"
 end
 
