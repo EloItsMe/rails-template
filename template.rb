@@ -127,6 +127,7 @@ end
 
 def config_letter_opener
   insert_into_file 'config/environments/development.rb', after: "config.action_mailer.raise_delivery_errors = false" do <<~RUBY
+      \n
       config.action_mailer.delivery_method = :letter_opener
       config.action_mailer.perform_deliveries = true
       config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
@@ -134,6 +135,7 @@ def config_letter_opener
   end
 
   insert_into_file 'config/environments/test.rb', after: "config.action_mailer.delivery_method = :test" do <<~RUBY
+    \n
     config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
   RUBY
   end
