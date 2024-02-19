@@ -14,6 +14,7 @@
 #  remember_created_at    :datetime
 #  reset_password_sent_at :datetime
 #  reset_password_token   :string
+#  unconfirmed_email      :string
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #
@@ -23,14 +24,16 @@
 #  index_users_on_email                 (email) UNIQUE
 #  index_users_on_reset_password_token  (reset_password_token) UNIQUE
 #
-FactoryBot.define do
-  factory :user do
-    email { Faker::Internet.unique.email }
-    password { 'P@ssw0rd' }
-    password_confirmation { 'P@ssw0rd' }
+require 'rails_helper'
 
-    trait :confirmed do
-      after(:create, &:confirm)
+RSpec.describe User do
+  describe 'factories' do
+    it 'is a valid factory' do
+      expect(build(:user)).to be_valid
+    end
+
+    it 'is confirmed with confirmed trait' do
+      expect(create(:user, :confirmed).confirmed?).to be true
     end
   end
 end

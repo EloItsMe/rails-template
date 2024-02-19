@@ -110,7 +110,11 @@ def install_simplecov
 end
 
 def config_simplecov
-  run "curl -L #{REPO + '/template/spec/support/simplecov.rb'} > spec/support/simplecov.rb"
+  insert_into_file 'spec/spec_helper.rb' do <<~RUBY
+    require 'simplecov'
+    SimpleCov.start 'rails'
+  RUBY
+  end
 end
 
 def install_faker
@@ -122,13 +126,16 @@ def install_letter_opener
 end
 
 def config_letter_opener
-  insert_into_file 'config/environments/development.rb', after: "config.action_mailer.raise_delivery_errors = false" do
-    <<~RUBY
-      \n
+  insert_into_file 'config/environments/development.rb', after: "config.action_mailer.raise_delivery_errors = false" do <<~RUBY
       config.action_mailer.delivery_method = :letter_opener
       config.action_mailer.perform_deliveries = true
       config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
     RUBY
+  end
+
+  insert_into_file 'config/environments/test.rb', after: "config.action_mailer.delivery_method = :test" do <<~RUBY
+    config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
+  RUBY
   end
 end
 
@@ -197,14 +204,18 @@ def config_devise
   gsub_file "db/migrate/#{migration_file_name}", " # t.string   :confirmation_token", " t.string   :confirmation_token"
   gsub_file "db/migrate/#{migration_file_name}", " # t.datetime :confirmed_at", " t.datetime :confirmed_at"
   gsub_file "db/migrate/#{migration_file_name}", " # t.datetime :confirmation_sent_at", " t.datetime :confirmation_sent_at"
-  gsub_file "db/migrate/#{migration_file_name}", " # t.string   :unconfirmed_email  # Only if using reconfirmable", " t.string   :unconfirmed_email"
+  gsub_file "db/migrate/#{migration_file_name}", " # t.string   :unconfirmed_email # Only if using reconfirmable", " t.string   :unconfirmed_email"
   gsub_file "db/migrate/#{migration_file_name}", " # t.datetime :locked_at", " t.datetime :locked_at"
   gsub_file "db/migrate/#{migration_file_name}", " # add_index :users, :confirmation_token,   unique: true", " add_index :users, :confirmation_token,   unique: true"
   remove_file "config/initializers/devise.rb"
   run "curl -L #{REPO + '/template/config/initializers/devise.rb'} > config/initializers/devise.rb"
+  run "curl -L #{REPO + '/template/spec/support/devise.rb'} > spec/support/devise.rb"
+  remove_file "app/models/user.rb"
+  run "curl -L #{REPO + '/template/app/models/user.rb'} > app/models/user.rb"
   remove_file "spec/factories/users.rb"
   run "curl -L #{REPO + '/template/spec/factories/users.rb'} > spec/factories/users.rb"
-  run "curl -L #{REPO + '/template/spec/support/devise.rb'} > spec/support/devise.rb"
+  remove_file "spec/models/user_spec.rb"
+  run "curl -L #{REPO + '/template/spec/models/user_spec.rb'} > spec/models/user_spec.rb"
 end
 
 def create_flash_component
@@ -298,8 +309,8 @@ after_bundle do
   # Helpers
   config_svg_helper
 
+  init_db
   run "rails stimulus:manifest:update"
   run "rubocop -A"
-  init_db
   init_git
 end
