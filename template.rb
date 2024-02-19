@@ -200,6 +200,8 @@ def config_devise
   gsub_file "db/migrate/#{migration_file_name}", " # t.string   :unconfirmed_email  # Only if using reconfirmable", " t.string   :unconfirmed_email"
   gsub_file "db/migrate/#{migration_file_name}", " # t.datetime :locked_at", " t.datetime :locked_at"
   gsub_file "db/migrate/#{migration_file_name}", " # add_index :users, :confirmation_token,   unique: true", " add_index :users, :confirmation_token,   unique: true"
+  remove_file "config/initializers/devise.rb"
+  run "curl -L #{REPO + '/template/config/initializers/devise.rb'} > config/initializers/devise.rb"
 end
 
 def create_flash_component
