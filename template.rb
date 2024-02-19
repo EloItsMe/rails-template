@@ -202,6 +202,8 @@ def config_devise
   gsub_file "db/migrate/#{migration_file_name}", " # add_index :users, :confirmation_token,   unique: true", " add_index :users, :confirmation_token,   unique: true"
   remove_file "config/initializers/devise.rb"
   run "curl -L #{REPO + '/template/config/initializers/devise.rb'} > config/initializers/devise.rb"
+  remove_file "spec/factories/users.rb"
+  run "curl -L #{REPO + '/template/spec/factories/users.rb'} > spec/factories/users.rb"
 end
 
 def create_flash_component
