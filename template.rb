@@ -153,6 +153,7 @@ end
 def config_view_component
   run "curl -L #{REPO + '/template/config/initializers/view_component.rb'} > config/initializers/view_component.rb"
   run "curl -L #{REPO + '/template/lib/tasks/stimulus_tasks.rake'} > lib/tasks/stimulus_tasks.rake"
+  run "curl -L #{REPO + '/template/spec/support/view_component.rb'} > spec/support/view_component.rb"
   run "mkdir app/components"
 end
 
@@ -177,6 +178,34 @@ end
 def config_simple_form
   remove_file "config/initializers/simple_form.rb"
   run "curl -L #{REPO + '/template/config/initializers/simple_form.rb'} > config/initializers/simple_form.rb"
+end
+
+def config_svg_helper
+  run "curl -L #{REPO + '/template/app/helpers/svg_helper.rb'} > app/helpers/svg_helper.rb"
+end
+
+def create_flash_component
+  empty_directory 'app/views/shared'
+  run "curl -L #{REPO + '/template/app/views/shared/_flashes.html.erb'} > app/views/layouts/_flashes.html.erb"
+  insert_into_file 'app/views/layouts/application.html.erb', after: "<body>\n" do <<~HTML
+    <%= render 'layouts/flashes' %>
+  HTML
+  end
+
+  empty_directory 'app/components/flash'
+  run "curl -L #{REPO + '/template/app/components/flash/flash_component.rb'} > app/components/flash/flash_component.rb"
+  run "curl -L #{REPO + '/template/app/components/flash/flash_component.html.erb'} > app/components/flash/flash_component.html.erb"
+  run "curl -L #{REPO + '/template/app/components/flash/flash_component_controller.js'} > app/components/flash/flash_component_controller.js"
+
+  empty_directory 'spec/components/flash'
+  run "curl -L #{REPO + '/template/spec/components/flash/flash_component_spec.rb'} > spec/components/flash/flash_component_spec.rb"
+  empty_directory 'spec/components/previews'
+  run "curl -L #{REPO + '/template/spec/components/previews/flash_component_preview.rb'} > spec/components/previews/flash_component_preview.rb"
+end
+
+def add_icons
+  empty_directory 'app/assets/images/icons'
+  run "curl -L #{REPO + '/template/app/assets/images/icons/x-mark.svg'} > app/assets/images/icons/x-mark.svg"
 end
 
 def init_db
@@ -236,6 +265,13 @@ after_bundle do
   config_lookbook
   install_simple_form
   config_simple_form
+
+  # Components
+  add_icons
+  create_flash_component
+
+  # Helpers
+  config_svg_helper
 
   run "rubocop -A"
   init_db
