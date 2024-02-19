@@ -30,7 +30,7 @@ FactoryBot.define do
     password_confirmation { 'password' }
 
     trait :confirmed do
-      after(:create) { |user| user.confirm }
+      after(:create, &:confirm)
     end
   end
 end

@@ -1,4 +1,4 @@
-REPO = "https://raw.githubusercontent.com/EloItsMe/rails-template/master"
+REPO = "https://raw.githubusercontent.com/EloItsMe/rails-template/feat/config-devise"
 
 def set_up_stylesheets
   remove_dir 'app/assets/stylesheets'
@@ -204,6 +204,7 @@ def config_devise
   run "curl -L #{REPO + '/template/config/initializers/devise.rb'} > config/initializers/devise.rb"
   remove_file "spec/factories/users.rb"
   run "curl -L #{REPO + '/template/spec/factories/users.rb'} > spec/factories/users.rb"
+  run "curl -L #{REPO + '/template/spec/support/devise.rb'} > spec/support/devise.rb"
 end
 
 def create_flash_component
