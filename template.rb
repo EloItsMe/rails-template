@@ -184,11 +184,29 @@ def config_svg_helper
   run "curl -L #{REPO + '/template/app/helpers/svg_helper.rb'} > app/helpers/svg_helper.rb"
 end
 
+def install_devise
+  run "bundle add devise"
+  generate "devise:install"
+  generate "devise User"
+end
+
+def config_devise
+  migration_file_name = ask("What is the name of the migration file for the users table? (include the .rb extension)")
+  migration_file_name.strip!
+  gsub_file "db/migrate/#{migration_file_name}", "def change", "def change # rubocop:disable Metrics/MethodLength"
+  gsub_file "db/migrate/#{migration_file_name}", " # t.string   :confirmation_token", " t.string   :confirmation_token"
+  gsub_file "db/migrate/#{migration_file_name}", " # t.datetime :confirmed_at", " t.datetime :confirmed_at"
+  gsub_file "db/migrate/#{migration_file_name}", " # t.datetime :confirmation_sent_at", " t.datetime :confirmation_sent_at"
+  gsub_file "db/migrate/#{migration_file_name}", " # t.string   :unconfirmed_email  # Only if using reconfirmable", " t.string   :unconfirmed_email"
+  gsub_file "db/migrate/#{migration_file_name}", " # t.datetime :locked_at", " t.datetime :locked_at"
+  gsub_file "db/migrate/#{migration_file_name}", " # add_index :users, :confirmation_token,   unique: true", " add_index :users, :confirmation_token,   unique: true"
+end
+
 def create_flash_component
   empty_directory 'app/views/shared'
-  run "curl -L #{REPO + '/template/app/views/shared/_flashes.html.erb'} > app/views/layouts/_flashes.html.erb"
+  run "curl -L #{REPO + '/template/app/views/shared/_flashes.html.erb'} > app/views/shared/_flashes.html.erb"
   insert_into_file 'app/views/layouts/application.html.erb', after: "<body>\n" do <<~HTML
-    <%= render 'layouts/flashes' %>
+    <%= render 'shared/flashes' %>
   HTML
   end
 
@@ -265,6 +283,8 @@ after_bundle do
   config_lookbook
   install_simple_form
   config_simple_form
+  install_devise
+  config_devise
 
   # Components
   add_icons
@@ -273,6 +293,7 @@ after_bundle do
   # Helpers
   config_svg_helper
 
+  run "rails stimulus:manifest:update"
   run "rubocop -A"
   init_db
   init_git
