@@ -347,6 +347,7 @@ after_bundle do
   # Components
   add_icons
   create_flash_component
+  create_navbar_component
 
   # Helpers
   config_svg_helper
