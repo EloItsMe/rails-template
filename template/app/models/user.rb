@@ -5,6 +5,7 @@
 # Table name: users
 #
 #  id                     :bigint           not null, primary key
+#  admin                  :boolean          default(FALSE), not null
 #  confirmation_sent_at   :datetime
 #  confirmation_token     :string
 #  confirmed_at           :datetime
@@ -26,30 +27,13 @@
 #
 class User < ApplicationRecord
   # Include default devise modules. Others available are:
-  # :timeoutable, :trackable and :omniauthable
+  # :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable, :confirmable, :lockable
+         :recoverable, :rememberable, :validatable, :confirmable
 
-  # Email validations is done by devise
-  PASSWORD_FORMAT = /\A
-    (?=.{8,})          # Must contain 8 or more characters
-    (?=.*\d)           # Must contain a digit
-    (?=.*[a-z])        # Must contain a lower case character
-    (?=.*[A-Z])        # Must contain an upper case character
-    (?=.*[[:^alnum:]]) # Must contain a symbol
-  /x
-
-  validates :password,
-            presence: true,
-            length: { in: Devise.password_length },
-            format: { with: PASSWORD_FORMAT },
-            confirmation: true,
-            on: :create
-
-  validates :password,
-            allow_nil: true,
-            length: { in: Devise.password_length },
-            format: { with: PASSWORD_FORMAT },
-            confirmation: true,
-            on: :update
+  # Email\Password validations is done by devise
+  validates :password, format: { with: /[a-z]/x, message: I18n.t('errors.messages.password_lower_case') }
+  validates :password, format: { with: /[A-Z]/x, message: I18n.t('errors.messages.password_upper_case') }
+  validates :password, format: { with: /\d/x, message: I18n.t('errors.messages.password_number') }
+  validates :password, format: { with: /[[:^alnum:]]/x, message: I18n.t('errors.messages.password_special') }
 end

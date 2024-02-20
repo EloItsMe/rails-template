@@ -5,6 +5,7 @@
 # Table name: users
 #
 #  id                     :bigint           not null, primary key
+#  admin                  :boolean          default(FALSE), not null
 #  confirmation_sent_at   :datetime
 #  confirmation_token     :string
 #  confirmed_at           :datetime
@@ -14,6 +15,7 @@
 #  remember_created_at    :datetime
 #  reset_password_sent_at :datetime
 #  reset_password_token   :string
+#  unconfirmed_email      :string
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #
@@ -31,6 +33,10 @@ FactoryBot.define do
 
     trait :confirmed do
       after(:create, &:confirm)
+    end
+
+    trait :admin do
+      admin { true }
     end
   end
 end

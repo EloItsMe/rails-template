@@ -196,7 +196,7 @@ end
 def install_devise
   run "bundle add devise"
   generate "devise:install"
-  generate "devise User"
+  generate "devise user admin:boolean"
 end
 
 def config_devise
@@ -207,7 +207,7 @@ def config_devise
   gsub_file "db/migrate/#{migration_file_name}", " # t.datetime :confirmed_at", " t.datetime :confirmed_at"
   gsub_file "db/migrate/#{migration_file_name}", " # t.datetime :confirmation_sent_at", " t.datetime :confirmation_sent_at"
   gsub_file "db/migrate/#{migration_file_name}", " # t.string   :unconfirmed_email # Only if using reconfirmable", " t.string   :unconfirmed_email"
-  gsub_file "db/migrate/#{migration_file_name}", " # t.datetime :locked_at", " t.datetime :locked_at"
+  gsub_file "db/migrate/#{migration_file_name}", " t.boolean :admin", " t.boolean :admin, null: false, default: false"
   gsub_file "db/migrate/#{migration_file_name}", " # add_index :users, :confirmation_token,   unique: true", " add_index :users, :confirmation_token,   unique: true"
   remove_file "config/initializers/devise.rb"
   run "curl -L #{REPO + '/template/config/initializers/devise.rb'} > config/initializers/devise.rb"
