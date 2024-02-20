@@ -160,6 +160,7 @@ def install_view_component
 end
 
 def config_view_component
+  run "curl -L #{REPO + '/template/app/views/layouts/components.html.erb'} > app/views/layouts/components.html.erb"
   run "curl -L #{REPO + '/template/config/initializers/view_component.rb'} > config/initializers/view_component.rb"
   run "curl -L #{REPO + '/template/lib/tasks/stimulus_tasks.rake'} > lib/tasks/stimulus_tasks.rake"
   run "curl -L #{REPO + '/template/spec/support/view_component.rb'} > spec/support/view_component.rb"
@@ -177,6 +178,7 @@ def config_lookbook
     end
   RUBY
   end
+  run "curl -L #{REPO + '/template/config/initializers/lookbook.rb'} > config/initializers/lookbook.rb"
 end
 
 def install_simple_form
@@ -258,9 +260,22 @@ def create_flash_component
   run "curl -L #{REPO + '/template/spec/components/previews/flash_component_preview.rb'} > spec/components/previews/flash_component_preview.rb"
 end
 
+def create_navbar_component
+  empty_directory 'app/components/navbar'
+  run "curl -L #{REPO + '/template/app/components/navbar/navbar_component.rb'} > app/components/navbar/navbar_component.rb"
+  run "curl -L #{REPO + '/template/app/components/navbar/navbar_component.html.erb'} > app/components/navbar/navbar_component.html.erb"
+
+  empty_directory 'spec/components/navbar'
+  run "curl -L #{REPO + '/template/spec/components/navbar/navbar_component_spec.rb'} > spec/components/navbar/navbar_component_spec.rb"
+  empty_directory 'spec/components/previews'
+  run "curl -L #{REPO + '/template/spec/components/previews/navbar_component_preview.rb'} > spec/components/previews/navbar_component_preview.rb"
+  run "curl -L #{REPO + '/template/app/javascript/controllers/dropdown_controller.js'} > app/javascript/controllers/dropdown_controller.js"
+end
+
 def add_icons
   empty_directory 'app/assets/images/icons'
   run "curl -L #{REPO + '/template/app/assets/images/icons/x-mark.svg'} > app/assets/images/icons/x-mark.svg"
+  run "curl -L #{REPO + '/template/app/assets/images/icons/cube-transparent.svg'} > app/assets/images/icons/cube-transparent.svg"
 end
 
 def init_db
@@ -271,6 +286,12 @@ def init_db
 end
 
 def  init_git
+  insert_into_file '.gitignore' do <<~GITIGNORE
+    /tmp
+    /log
+    /coverage
+  GITIGNORE
+  end
   git init: %Q{ -b master }
   git add: "."
   git commit: %Q{ -m 'Initial commit' }

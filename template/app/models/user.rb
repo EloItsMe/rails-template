@@ -36,4 +36,8 @@ class User < ApplicationRecord
   validates :password, format: { with: /[A-Z]/x, message: I18n.t('errors.messages.password_upper_case') }
   validates :password, format: { with: /\d/x, message: I18n.t('errors.messages.password_number') }
   validates :password, format: { with: /[[:^alnum:]]/x, message: I18n.t('errors.messages.password_special') }
+
+  def avatar
+    "https://api.dicebear.com/7.x/lorelei/svg?seed=#{email}"
+  end
 end
