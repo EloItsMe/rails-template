@@ -197,6 +197,8 @@ def install_devise
   run "bundle add devise"
   generate "devise:install"
   generate "devise user admin:boolean"
+  generate "devise:controllers auths -v confirmations registrations sessions passwords"
+  generate "devise:views auths"
 end
 
 def config_devise
@@ -219,7 +221,7 @@ def config_devise
   remove_file "spec/models/user_spec.rb"
   run "curl -L #{REPO + '/template/spec/models/user_spec.rb'} > spec/models/user_spec.rb"
   insert_into_file 'app/controllers/application_controller.rb', after: "include Pundit::Authorization\n" do <<~RUBY
-    
+
     before_action :authenticate_user!
   RUBY
   end
@@ -232,6 +234,9 @@ def config_devise
 
   empty_directory 'spec/requests'
   run "curl -L #{REPO + '/template/spec/requests/pages_spec.rb'} > spec/requests/pages_spec.rb"
+
+  remove_dir 'app/views/auths/unlocks'
+  remove_file 'app/views/auths/mailer/unlock_instructions.html.erb'
 end
 
 def create_flash_component
