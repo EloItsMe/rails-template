@@ -221,6 +221,7 @@ def config_devise
   insert_into_file 'app/controllers/application_controller.rb', after: "include Pundit::Authorization\n\n" do <<~RUBY
     before_action :authenticate_user!
   RUBY
+  end
   empty_directory 'app/views/pages'
   run "curl -L #{REPO + '/template/app/views/pages/home.html.erb'} > app/views/pages/home.html.erb"
   run "curl -L #{REPO + '/template/app/controllers/pages_controller.rb'} > app/controllers/pages_controller.rb"
@@ -230,7 +231,6 @@ def config_devise
 
   empty_directory 'spec/requests'
   run "curl -L #{REPO + '/template/spec/requests/pages_spec.rb'} > spec/requests/pages_spec.rb"
-  end
 end
 
 def create_flash_component
