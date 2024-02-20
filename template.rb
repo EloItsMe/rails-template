@@ -218,7 +218,8 @@ def config_devise
   run "curl -L #{REPO + '/template/spec/factories/users.rb'} > spec/factories/users.rb"
   remove_file "spec/models/user_spec.rb"
   run "curl -L #{REPO + '/template/spec/models/user_spec.rb'} > spec/models/user_spec.rb"
-  insert_into_file 'app/controllers/application_controller.rb', after: "include Pundit::Authorization\n\n" do <<~RUBY
+  insert_into_file 'app/controllers/application_controller.rb', after: "include Pundit::Authorization\n" do <<~RUBY
+    
     before_action :authenticate_user!
   RUBY
   end
