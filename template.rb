@@ -72,13 +72,11 @@ end
 
 def install_capybara
   run "bundle add capybara --group test"
+  run "bundle add selenium-webdriver --group test"
 end
 
-def config_capbyara
-  insert_into_file 'spec/rails_helper.rb', after: "require 'rspec/rails'\n" do <<~RUBY
-    require 'capybara/rails'
-  RUBY
-  end
+def config_capybara
+  run "curl -L #{REPO + '/template/spec/support/capybara.rb'} > spec/support/capybara.rb"
 end
 
 def install_factory_bot
@@ -119,6 +117,22 @@ end
 
 def install_faker
   run "bundle add faker --group 'development, test'"
+end
+
+def install_sidekiq
+  run "bundle add sidekiq"
+end
+
+def config_sidekiq
+  insert_into_file 'Procfile.dev' do <<~RUBY
+    worker: bundle exec sidekiq
+  RUBY
+  end
+
+  insert_into_file 'config/application.rb', after: "class Application < Rails::Application\n" do <<~RUBY
+    config.active_job.queue_adapter = :sidekiq
+  RUBY
+  end
 end
 
 def install_letter_opener
@@ -279,7 +293,7 @@ after_bundle do
   install_rspec
   config_rspec
   install_capybara
-  config_capbyara
+  config_capybara
   install_factory_bot
   config_factory_bot
   install_shoulda_matchers
@@ -293,6 +307,8 @@ after_bundle do
   # Admin
 
   # Utilities
+  install_sidekiq 
+  config_sidekiq
   install_letter_opener
   config_letter_opener
   install_annotate
