@@ -1,4 +1,4 @@
-REPO = "https://raw.githubusercontent.com/EloItsMe/rails-template/feat/config-devise"
+REPO = "https://raw.githubusercontent.com/EloItsMe/rails-template/master"
 
 def set_up_stylesheets
   remove_dir 'app/assets/stylesheets'
