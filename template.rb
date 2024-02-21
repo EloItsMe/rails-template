@@ -307,16 +307,12 @@ after_bundle do
   install_devise
   config_devise
 
-  # Components
-  add_icons
-  create_flash_component
-  create_navbar_component
-
   # Helpers
   config_svg_helper
 
   init_db
   run "rails stimulus:manifest:update"
+  run "annotate"
   run "rubocop -A"
   init_git
 end
