@@ -241,43 +241,6 @@ def config_devise
   remove_file 'app/views/auths/mailer/unlock_instructions.html.erb'
 end
 
-def create_flash_component
-  empty_directory 'app/views/shared'
-  run "curl -L #{REPO + '/template/app/views/shared/_flashes.html.erb'} > app/views/shared/_flashes.html.erb"
-  insert_into_file 'app/views/layouts/application.html.erb', after: "<body>\n" do <<~HTML
-    <%= render 'shared/flashes' %>
-  HTML
-  end
-
-  empty_directory 'app/components/flash'
-  run "curl -L #{REPO + '/template/app/components/flash/flash_component.rb'} > app/components/flash/flash_component.rb"
-  run "curl -L #{REPO + '/template/app/components/flash/flash_component.html.erb'} > app/components/flash/flash_component.html.erb"
-  run "curl -L #{REPO + '/template/app/components/flash/flash_component_controller.js'} > app/components/flash/flash_component_controller.js"
-
-  empty_directory 'spec/components/flash'
-  run "curl -L #{REPO + '/template/spec/components/flash/flash_component_spec.rb'} > spec/components/flash/flash_component_spec.rb"
-  empty_directory 'spec/components/previews'
-  run "curl -L #{REPO + '/template/spec/components/previews/flash_component_preview.rb'} > spec/components/previews/flash_component_preview.rb"
-end
-
-def create_navbar_component
-  empty_directory 'app/components/navbar'
-  run "curl -L #{REPO + '/template/app/components/navbar/navbar_component.rb'} > app/components/navbar/navbar_component.rb"
-  run "curl -L #{REPO + '/template/app/components/navbar/navbar_component.html.erb'} > app/components/navbar/navbar_component.html.erb"
-
-  empty_directory 'spec/components/navbar'
-  run "curl -L #{REPO + '/template/spec/components/navbar/navbar_component_spec.rb'} > spec/components/navbar/navbar_component_spec.rb"
-  empty_directory 'spec/components/previews'
-  run "curl -L #{REPO + '/template/spec/components/previews/navbar_component_preview.rb'} > spec/components/previews/navbar_component_preview.rb"
-  run "curl -L #{REPO + '/template/app/javascript/controllers/dropdown_controller.js'} > app/javascript/controllers/dropdown_controller.js"
-end
-
-def add_icons
-  empty_directory 'app/assets/images/icons'
-  run "curl -L #{REPO + '/template/app/assets/images/icons/x-mark.svg'} > app/assets/images/icons/x-mark.svg"
-  run "curl -L #{REPO + '/template/app/assets/images/icons/cube-transparent.svg'} > app/assets/images/icons/cube-transparent.svg"
-end
-
 def init_db
   rails_command "db:drop"
   rails_command "db:create"

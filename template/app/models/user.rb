@@ -37,7 +37,7 @@ class User < ApplicationRecord
   validates :password, format: { with: /\d/x, message: I18n.t('errors.messages.password_number') }
   validates :password, format: { with: /[[:^alnum:]]/x, message: I18n.t('errors.messages.password_special') }
 
-  def avatar
-    "https://api.dicebear.com/7.x/lorelei/svg?seed=#{email}"
+  def send_devise_notification(notification, *args)
+    devise_mailer.send(notification, self, *args).deliver_later
   end
 end
