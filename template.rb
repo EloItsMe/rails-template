@@ -38,7 +38,7 @@ end
 def install_pundit
   run "bundle add pundit"
   generate "pundit:install"
-  run "curl -L #{REPO + '/template/app/spec/support/pundit.rb'} > spec/support/pundit.rb"
+  run "curl -L #{REPO + '/template/spec/support/pundit.rb'} > spec/support/pundit.rb"
 end
 
 def pundit_config
@@ -175,7 +175,7 @@ def install_view_component
 end
 
 def config_view_component
-  run "curl -L #{REPO + '/template/app/views/layouts/components.html.erb'} > app/views/layouts/components.html.erb"
+  run "curl -L #{REPO + '/template/app/views/layouts/component.html.erb'} > app/views/layouts/component.html.erb"
   run "curl -L #{REPO + '/template/config/initializers/view_component.rb'} > config/initializers/view_component.rb"
   run "curl -L #{REPO + '/template/lib/tasks/stimulus_tasks.rake'} > lib/tasks/stimulus_tasks.rake"
   run "curl -L #{REPO + '/template/spec/support/view_component.rb'} > spec/support/view_component.rb"
@@ -297,7 +297,7 @@ after_bundle do
   install_simplecov
   config_simplecov
   install_faker
-  
+
   # Security
   install_pundit
   pundit_config
