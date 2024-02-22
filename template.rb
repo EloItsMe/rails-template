@@ -282,14 +282,7 @@ after_bundle do
   # Linter
   install_rubocop
   config_rubocop
-
-  # Security
-  install_pundit
-  pundit_config
-  install_brakeman
-  install_bullet
-  config_bullet
-
+  
   # Testing
   install_rspec
   config_rspec
@@ -304,6 +297,14 @@ after_bundle do
   install_simplecov
   config_simplecov
   install_faker
+  
+  # Security
+  install_pundit
+  pundit_config
+  install_brakeman
+  install_bullet
+  config_bullet
+
 
   # Admin
 
