@@ -38,6 +38,7 @@ end
 def install_pundit
   run "bundle add pundit"
   generate "pundit:install"
+  run "curl -L #{REPO + '/template/app/spec/support/pundit.rb'} > spec/support/pundit.rb"
 end
 
 def pundit_config
