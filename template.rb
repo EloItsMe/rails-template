@@ -256,6 +256,18 @@ def config_devise
   remove_file 'app/views/auths/mailer/unlock_instructions.html.erb'
 end
 
+def install_active_admin
+  run "bundle add activeadmin"
+  run "bundle add sassc-rails"
+  generate "active_admin:install user --skip-users"
+  run "bundle add activeadmin_addons"
+  generate "activeadmin_addons:install"
+end
+
+def config_active_admin
+  run "curl -L #{REPO + '/template/app/models/application_record.rb'} > app/models/application_record.rb"
+end
+
 def init_db
   rails_command "db:drop"
   rails_command "db:create"
@@ -305,9 +317,6 @@ after_bundle do
   install_bullet
   config_bullet
 
-
-  # Admin
-
   # Utilities
   install_sidekiq 
   config_sidekiq
@@ -324,6 +333,10 @@ after_bundle do
   config_simple_form
   install_devise
   config_devise
+
+  # Admin
+  install_active_admin
+  config_active_admin
 
   # Helpers
   config_svg_helper

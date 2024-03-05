@@ -10,6 +10,7 @@ AllCops:
     - "bin/**/*"
     - "lib/**/*"
     - "config/environments/*"
+    - "db/schema.rb"
 
 Style/Documentation:
   Enabled: false
