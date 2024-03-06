@@ -1,0 +1,82 @@
+# This workflow uses actions that are not certified by GitHub.  They are
+# provided by a third-party and are governed by separate terms of service,
+# privacy policy, and support documentation.
+#
+# This workflow will install a prebuilt Ruby version, install dependencies, and
+# run tests and linters.
+name: "CI / Test"
+
+on:
+  push:
+    branches:
+      - main
+      - master
+      - staging
+      - develop
+  pull_request:
+
+jobs:
+  Rspec:
+    runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis
+        ports:
+          - "6379:6379"
+        options: --entrypoint redis-server
+
+      postgres:
+        image: postgres:11-alpine
+        ports:
+          - "5432:5432"
+        env:
+          POSTGRES_DB: rails_test
+          POSTGRES_USER: rails
+          POSTGRES_PASSWORD: password
+        options: >-
+          --mount type=tmpfs,destination=/var/lib/postgresql/data
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      RAILS_ENV: test
+      RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
+      DATABASE_URL: "postgres://rails:password@localhost:5432/rails_test"
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install Ruby and gems
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Install packages
+        run: bin/rails assets:precompile
+
+      - name: Set up database schema
+        run: bundle exec rails db:create db:schema:load
+
+      - name: Run tests
+        run: bundle exec rspec
+
+      - name: Code Coverage Summary
+        uses: irongut/CodeCoverageSummary@v1.3.0
+        with:
+          filename: "./coverage/coverage.xml"
+          badge: true
+          fail_below_min: true
+          format: markdown
+          hide_branch_rate: false
+          hide_complexity: true
+          indicators: true
+          output: both
+          thresholds: "60 80"
+
+      - name: Add Coverage PR Comment
+        uses: marocchino/sticky-pull-request-comment@v2.9.0
+        if: github.event_name == 'pull_request'
+        with:
+          recreate: true
+          path: code-coverage-results.md

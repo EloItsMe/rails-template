@@ -32,10 +32,10 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable, :confirmable
 
   # Email\Password validations is done by devise
-  validates :password, format: { with: /[a-z]/x, message: I18n.t('errors.messages.password_lower_case') }
-  validates :password, format: { with: /[A-Z]/x, message: I18n.t('errors.messages.password_upper_case') }
-  validates :password, format: { with: /\d/x, message: I18n.t('errors.messages.password_number') }
-  validates :password, format: { with: /[[:^alnum:]]/x, message: I18n.t('errors.messages.password_special') }
+  validates :password, format: { with: /\A.*[a-z].*\z/x, message: I18n.t('errors.messages.password_lower_case') }
+  validates :password, format: { with: /\A.*[A-Z].*\z/x, message: I18n.t('errors.messages.password_upper_case') }
+  validates :password, format: { with: /\A.*\d.*\z/x, message: I18n.t('errors.messages.password_number') }
+  validates :password, format: { with: /\A.*[[:^alnum:]].*\z/x, message: I18n.t('errors.messages.password_special') }
 
   def send_devise_notification(notification, *args)
     devise_mailer.send(notification, self, *args).deliver_later

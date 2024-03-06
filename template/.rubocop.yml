@@ -11,6 +11,7 @@ AllCops:
     - "lib/**/*"
     - "config/environments/*"
     - "db/schema.rb"
+    - "vendor/bundle/**/*"
 
 Style/Documentation:
   Enabled: false

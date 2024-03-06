@@ -53,6 +53,10 @@ def install_brakeman
   run "bundle add brakeman --group development"
 end
 
+def install_bundler_audit
+  run "bundle add bundler-audit --group development"
+end
+
 def install_bullet
   run "bundle add bullet --group development"
 end
@@ -106,12 +110,19 @@ end
 
 def install_simplecov
   run "bundle add simplecov --group test"
+  run "bundle add simplecov-cobertura --group test"
 end
 
 def config_simplecov
   insert_into_file 'spec/spec_helper.rb' do <<~RUBY
     require 'simplecov'
-    SimpleCov.start 'rails'
+    require 'simplecov-cobertura'
+    SimpleCov.start 'rails' do
+      formatter SimpleCov::Formatter::MultiFormatter.new([
+                                                          SimpleCov::Formatter::HTMLFormatter,
+                                                          SimpleCov::Formatter::CoberturaFormatter
+                                                        ])
+    end
   RUBY
   end
 end
@@ -268,6 +279,13 @@ def config_active_admin
   run "curl -L #{REPO + '/template/app/models/application_record.rb'} > app/models/application_record.rb"
 end
 
+def set_up_github_action
+  empty_directory '.github/workflows'
+  run "curl -L #{REPO + '/template/.github/workflows/linter.yml'} > .github/workflows/linter.yml"
+  run "curl -L #{REPO + '/template/.github/workflows/test.yml'} > .github/workflows/test.yml"
+  run "curl -L #{REPO + '/template/.github/workflows/security.yml'} > .github/workflows/security.yml"
+end
+
 def init_db
   rails_command "db:drop"
   rails_command "db:create"
@@ -313,6 +331,7 @@ after_bundle do
   # Security
   install_pundit
   pundit_config
+  install_bundler_audit
   install_brakeman
   install_bullet
   config_bullet
@@ -333,6 +352,7 @@ after_bundle do
   config_simple_form
   install_devise
   config_devise
+  set_up_github_action
 
   # Admin
   install_active_admin
