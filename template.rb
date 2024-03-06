@@ -286,6 +286,15 @@ def set_up_github_action
   run "curl -L #{REPO + '/template/.github/workflows/security.yml'} > .github/workflows/security.yml"
 end
 
+def set_up_github_PR_template
+  run "curl -L #{REPO + '/template/.github/pull_request_template.md'} > .github/pull_request_template.md"
+  empty_directory '.github/PULL_REQUEST_TEMPLATE'
+  run "curl -L #{REPO + '/template/.github/PULL_REQUEST_TEMPLATE/default_template.md'} > .github/PULL_REQUEST_TEMPLATE/default_template.md"
+  run "curl -L #{REPO + '/template/.github/PULL_REQUEST_TEMPLATE/hotfix_template.md'} > .github/PULL_REQUEST_TEMPLATE/hotfix_template.md"
+  run "curl -L #{REPO + '/template/.github/PULL_REQUEST_TEMPLATE/merge_dev_into_main_template.md'} > .github/PULL_REQUEST_TEMPLATE/merge_dev_into_main_template.md"
+  run "curl -L #{REPO + '/template/.github/PULL_REQUEST_TEMPLATE/merge_dev_into_staging_template.md'} > .github/PULL_REQUEST_TEMPLATE/merge_dev_into_staging_template.md"
+end
+
 def init_db
   rails_command "db:drop"
   rails_command "db:create"
@@ -353,6 +362,7 @@ after_bundle do
   install_devise
   config_devise
   set_up_github_action
+  set_up_github_PR_template
 
   # Admin
   install_active_admin
