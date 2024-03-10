@@ -24,5 +24,6 @@ SimpleForm.setup do |config|
   config.label_text = ->(label, required, _explicit_label) { "#{required} #{label}" }
   config.generate_additional_classes_for = []
   config.browser_validations = false
+  config.form_class = 'form__wrapper'
   # config.i18n_scope = 'simple_form'
 end
