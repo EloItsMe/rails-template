@@ -18,7 +18,7 @@ def set_up_stylesheets
   run "curl -L #{REPO + "/template/app/assets/stylesheets/components/form/_text.scss"} > app/assets/stylesheets/components/form/_text.scss"
   run "curl -L #{REPO + "/template/app/assets/stylesheets/components/form/_wrapper.scss"} > app/assets/stylesheets/components/form/_wrapper.scss"
   run "curl -L #{REPO + "/template/app/assets/stylesheets/components/form/_checkbox.scss"} > app/assets/stylesheets/components/form/_checkbox.scss"
-  run "curl -L #{REPO + "/template/app/assets/stylesheets/components/index.scss"} > app/assets/stylesheets/components/index.scss"
+  run "curl -L #{REPO + "/template/app/assets/stylesheets/components/form/index.scss"} > app/assets/stylesheets/components/form/index.scss"
   run "curl -L #{REPO + "/template/app/assets/stylesheets/components/index.scss"} > app/assets/stylesheets/components/index.scss"
 
   empty_directory 'app/assets/stylesheets/externals'
@@ -156,6 +156,17 @@ def config_simplecov
                                                           SimpleCov::Formatter::HTMLFormatter,
                                                           SimpleCov::Formatter::CoberturaFormatter
                                                         ])
+      add_filter '/jobs/application_job.rb'
+      add_filter '/helpers/application_helper.rb'
+      add_filter '/mailers/application_mailer.rb'
+      add_filter '/models/application_record.rb'
+      add_filter '/channels/application_cable/channel.rb'
+      add_filter '/channels/application_cable/connection.rb'
+      add_filter '/controllers/auths'
+      add_filter '/helpers/svg_helper.rb'
+      add_filter '/components/typographie/typographie_component.rb'
+      add_filter '/policies/application_policy.rb'
+      add_filter '/admin'
     end
   RUBY
   end
@@ -170,11 +181,6 @@ def install_sidekiq
 end
 
 def config_sidekiq
-  insert_into_file 'Procfile.dev' do <<~RUBY
-    worker: bundle exec sidekiq
-  RUBY
-  end
-
   insert_into_file 'config/application.rb', after: "class Application < Rails::Application\n" do <<~RUBY
     config.active_job.queue_adapter = :sidekiq
   RUBY
@@ -224,7 +230,9 @@ def config_view_component
   run "curl -L #{REPO + '/template/config/initializers/view_component.rb'} > config/initializers/view_component.rb"
   run "curl -L #{REPO + '/template/lib/tasks/stimulus_tasks.rake'} > lib/tasks/stimulus_tasks.rake"
   run "curl -L #{REPO + '/template/spec/support/view_component.rb'} > spec/support/view_component.rb"
-  run "mkdir app/components"
+  empty_directory 'app/components'
+  empty_directory 'spec/components'
+  empty_directory 'spec/components/previews'
 end
 
 def install_lookbook
@@ -329,6 +337,13 @@ def set_up_github_PR_template
   run "curl -L #{REPO + '/template/.github/PULL_REQUEST_TEMPLATE/merge_dev_into_staging_template.md'} > .github/PULL_REQUEST_TEMPLATE/merge_dev_into_staging_template.md"
 end
 
+def typographie_component
+  empty_directory 'app/components/typographie'
+  run "curl -L #{REPO + '/template/app/components/typographie/typographie_component.rb'} > app/components/typographie/typographie_component.rb"
+  run "curl -L #{REPO + '/template/app/components/typographie/typographie_component.html.erb'} > app/components/typographie/typographie_component.html.erb"
+  run "curl -L #{REPO + '/template/spec/components/previews/typographie_component_preview.rb'} > spec/components/previews/typographie_component_preview.rb"
+end
+
 def init_db
   rails_command "db:drop"
   rails_command "db:create"
@@ -405,6 +420,9 @@ after_bundle do
 
   # Helpers
   config_svg_helper
+
+  # Components
+  typographie_component
 
   init_db
   run "rails stimulus:manifest:update"
