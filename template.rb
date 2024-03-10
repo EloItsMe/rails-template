@@ -138,7 +138,7 @@ def config_shoulda_matchers
 end
 
 def install_database_cleaner
-  run "bundle add database_cleaner-active_record --group test"
+  run "bundle add database_cleaner-active_record --group 'development, test'"
 end
 
 def config_database_cleaner
@@ -168,6 +168,7 @@ def config_simplecov
       add_filter '/controllers/auths'
       add_filter '/helpers/svg_helper.rb'
       add_filter '/components/typographie/typographie_component.rb'
+      add_filter '/components/form/input/input_component.rb'
       add_filter '/policies/application_policy.rb'
       add_filter '/admin'
     end
@@ -361,6 +362,15 @@ def flash_component
   run "curl -L #{REPO + '/template/app/views/shared/_flashes.html.erb'} > app/views/shared/_flashes.html.erb"
 end
 
+def form_component
+  empty_directory 'app/components/form'
+  empty_directory 'app/components/form/input'
+  run "curl -L #{REPO + '/template/app/components/form/input/input_component.rb'} > app/components/form/input/input_component.rb"
+  run "curl -L #{REPO + '/template/app/components/form/input/input_component.html.erb'} > app/components/form/input/input_component.html.erb"
+  empty_directory 'spec/components/previews/form'
+  run "curl -L #{REPO + '/template/spec/components/previews/form/input_component_preview.rb'} > spec/components/previews/form/input_component_preview.rb"
+end
+
 def init_db
   rails_command "db:drop"
   rails_command "db:create"
@@ -441,6 +451,7 @@ after_bundle do
   # Components
   typographie_component
   flash_component
+  form_component
 
   init_db
   run "rails stimulus:manifest:update"

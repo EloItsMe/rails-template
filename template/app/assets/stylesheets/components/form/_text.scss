@@ -1,23 +1,24 @@
 .form__text--label {
   font-size: var(--fs--s);
   line-height: 1.5;
-  color: var(--cl-gray--700);
+  color: var(--cl-slate--900);
   font-weight: 500;
-  margin-bottom: 0.25em;
+
+  &:has(+ .form__input:disabled) {
+    color: var(--cl-slate--500);
+  }
 }
 
 .form__text--hint {
-  font-size: var(--fs--xs);
+  font-size: var(--fs--s);
   line-height: 1.5;
-  color: var(--cl-gray--400);
+  color: var(--cl-slate--500);
   font-weight: 400;
-  margin-bottom: 0.25em;
 }
 
 .form__text--error {
-  font-size: var(--fs--xs);
+  font-size: var(--fs--s);
   line-height: 1.5;
   color: var(--cl-error--700);
   font-weight: 400;
-  margin-bottom: 0.25em;
 }

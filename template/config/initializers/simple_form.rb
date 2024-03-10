@@ -10,7 +10,7 @@ SimpleForm.setup do |config|
     b.use :min_max
     b.use :readonly
     b.use :label, class: 'form__text--label'
-    b.use :input, error_class: :invalid, valid_class: :valid
+    b.use :input, class: 'form__input', error_class: :invalid, valid_class: :valid
     b.use :hint,  wrap_with: { tag: :span, class: 'form__text--hint' }
     b.use :error, wrap_with: { tag: :span, class: 'form__text--error' }
   end

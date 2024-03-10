@@ -1,0 +1,10 @@
+<%= simple_form_for :test do |f| %>
+  <%= f.input :test,
+              as: @type,
+              label: @label,
+              placeholder: @placeholder,
+              hint: @hint,
+              error: @error,
+              disabled: @disabled,
+              html5: true %>
+<% end %>
