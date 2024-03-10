@@ -1,0 +1,110 @@
+.flashes__wrapper {
+  // Positioning
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  // Box Properties
+  width: 100%;
+  max-width: 26.25rem;
+  padding: 1rem;
+}
+
+.flash {
+  // Positioning
+  position: relative;
+  // Box Properties
+  padding: 1rem;
+  padding-right: 2rem;
+  border-style: solid;
+  border-width: 0.0625rem;
+  border-radius: calc(1em / 2);
+  // Typography
+  font-size: var(--fs--s);
+  line-height: 1.25rem;
+  font-weight: 600;
+  // Colors
+  color: var(--cl-slate--900);
+  border-color: var(--cl-slate--300);
+
+  &:hover {
+    .flash__btn {
+      // Other
+      opacity: 1;
+    }
+  }
+
+  &--notice {
+    // Colors
+    background-color: var(--cl-success--100);
+    border-color: var(--cl-success--300);
+  }
+
+  &--alert {
+    // Colors
+    background-color: var(--cl-error--100);
+    border-color: var(--cl-error--300);
+  }
+
+  &[data-state="open"] {
+    // Animation
+    animation: openFlash 0.15s ease-in-out;
+  }
+
+  &[data-state="closed"] {
+    // Animation
+    animation: closeFlash 0.15s ease-in-out forwards;
+  }
+}
+
+.flash__btn {
+  // Positioning
+  position: absolute;
+  top: 0;
+  right: 0;
+  // Box Properties
+  padding: 0.5em;
+  border: none;
+  background: none;
+  // Typography
+  font-size: 1rem;
+  // Colors
+  color: var(--cl-slate--400);
+  // Other
+  cursor: pointer;
+  opacity: 0;
+  // Animation
+  transition-property: color opacity;
+  transition-duration: 0.1s;
+
+  &:hover {
+    // Colors
+    color: var(--cl-slate--900);
+  }
+}
+
+@keyframes openFlash {
+  0% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes closeFlash {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}

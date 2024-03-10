@@ -1,0 +1,10 @@
+<%= tag.div class: "flash flash--#{@type}", data: { controller: "flash--flash-component"} do %>
+  <%= content %>
+  <%= tag.button type: :button,
+                  class: "flash__btn",
+                  data: {
+                    action: "flash--flash-component#close"
+                  } do %>
+    <%= helpers.svg_tag "x-mark" %>
+  <% end %>
+<% end %>

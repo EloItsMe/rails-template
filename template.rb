@@ -13,6 +13,7 @@ def set_up_stylesheets
 
   empty_directory 'app/assets/stylesheets/components'
   run "curl -L #{REPO + "/template/app/assets/stylesheets/components/_button.scss"} > app/assets/stylesheets/components/_button.scss"
+  run "curl -L #{REPO + "/template/app/assets/stylesheets/components/_flash.scss"} > app/assets/stylesheets/components/_flash.scss"
   empty_directory 'app/assets/stylesheets/components/form'
   run "curl -L #{REPO + "/template/app/assets/stylesheets/components/form/_input.scss"} > app/assets/stylesheets/components/form/_input.scss"
   run "curl -L #{REPO + "/template/app/assets/stylesheets/components/form/_text.scss"} > app/assets/stylesheets/components/form/_text.scss"
@@ -39,6 +40,8 @@ end
 
 def set_up_assets
   run "curl -L #{REPO + "/template/config/initializers/asset_url_processor.rb"} > config/initializers/asset_url_processor.rb"
+  empty_directory 'app/assets/images/icons'
+  run "curl -L #{REPO + "/template/app/assets/images/icons/x-mark.svg"} > app/assets/images/icons/x-mark.svg"
 end
 
 def install_rubocop
@@ -344,6 +347,20 @@ def typographie_component
   run "curl -L #{REPO + '/template/spec/components/previews/typographie_component_preview.rb'} > spec/components/previews/typographie_component_preview.rb"
 end
 
+def flash_component
+  empty_directory 'app/components/flash'
+  run "curl -L #{REPO + '/template/app/components/flash/flash_component.rb'} > app/components/flash/flash_component.rb"
+  run "curl -L #{REPO + '/template/app/components/flash/flash_component.html.erb'} > app/components/flash/flash_component.html.erb"
+  run "curl -L #{REPO + '/template/app/components/flash/flash_component_controller.js'} > app/components/flash/flash_component_controller.js"
+
+  empty_directory 'spec/components/flash'
+  run "curl -L #{REPO + '/template/spec/components/flash/flash_component_spec.rb'} > spec/components/flash/flash_component_spec.rb"
+  run "curl -L #{REPO + '/template/spec/components/previews/flash_component_preview.rb'} > spec/components/previews/flash_component_preview.rb"
+
+  empty_directory 'app/views/shared'
+  run "curl -L #{REPO + '/template/app/views/shared/_flashes.html.erb'} > app/views/shared/_flashes.html.erb"
+end
+
 def init_db
   rails_command "db:drop"
   rails_command "db:create"
@@ -423,6 +440,7 @@ after_bundle do
 
   # Components
   typographie_component
+  flash_component
 
   init_db
   run "rails stimulus:manifest:update"

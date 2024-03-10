@@ -1,8 +1,5 @@
-<%= turbo_frame_tag 'flash' do %>
-  <% if notice %>
-    <%= render Flash::FlashComponent.new(type: :notice).with_content(notice) %>
-  <% end %>
-  <% if alert %>
-    <%= render Flash::FlashComponent.new(type: :alert).with_content(alert) %>
+<%= turbo_frame_tag :flashes, class: "flashes__wrapper" do %>
+  <% flash.each do |type, message| %>
+    <%= render Flash::FlashComponent.new(type: type).with_content(message) %>
   <% end %>
 <% end %>
