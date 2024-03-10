@@ -1,0 +1,52 @@
+$colors: (
+  "white": #fff,
+  "black": #000,
+
+  gray--1000: #1a1d1f,
+  gray--900: #24292e,
+  gray--800: #383f45,
+  gray--700: #454c52,
+  gray--600: #596066,
+  gray--500: #676e76,
+  gray--400: #9ea5ad,
+  gray--300: #ced2d6,
+  gray--200: #e5e7ea,
+  gray--100: #f6f7f9,
+  gray--50: #fafafa,
+
+  success--1000: #1e4d3a,
+  success--900: #255e46,
+  success--800: #2f7657,
+  success--700: #2f9461,
+  success--600: #53b483,
+  success--500: #6ad09d,
+  success--400: #8ee4ba,
+  success--300: #b8f1d2,
+  success--200: #d9f9e6,
+  success--100: #effdf6,
+  success--50: #f6fef9,
+
+  error--1000: #601b1b,
+  error--900: #7c2323,
+  error--800: #a32e2e,
+  error--700: #cd3636,
+  error--600: #f34141,
+  error--500: #f37373,
+  error--400: #f7a1a1,
+  error--300: #fac7c7,
+  error--200: #fde9e9,
+  error--100: #fef2f2,
+  error--50: #fffbfa,
+);
+
+:root {
+  @each $color, $value in $colors {
+    --cl-#{$color}: #{$value};
+  }
+}
+
+@each $color, $value in $colors {
+  .cl-#{$color} {
+    color: #{$value};
+  }
+}

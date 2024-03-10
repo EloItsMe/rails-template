@@ -1,0 +1,70 @@
+:root {
+  --fs--4xl: clamp(1.875rem, 1.725rem + 0.5vi, 2.125rem); // 30px -> 36px
+  --fs--3xl: clamp(1.5rem, 1.275rem + 0.75vi, 1.875rem); // 24px -> 30px
+  --fs--2xl: clamp(1.25rem, 1.1rem + 0.5vi, 1.5rem); // 20px -> 24px
+  --fs--xl: clamp(1.125rem, 1.05rem + 0.25vi, 1.25rem); //18px -> 20px
+  --fs--l: clamp(1.0625rem, 1.025rem + 0.125vi, 1.125rem); // 17px -> 18px
+  --fs--m: 1rem; // 16px
+  --fs--s: 0.875rem; // 14px
+  --fs--xs: 0.75rem; // 12px
+  --fs--xxs: 0.625rem; // 10px
+}
+
+html {
+  font-size: 100%;
+  font-family: system-ui, sans-serif;
+}
+
+.title--l {
+  font-size: var(--fs--4xl);
+  line-height: 2.5rem;
+  font-weight: 700;
+}
+
+.title {
+  font-size: var(--fs--3xl);
+  line-height: 2.25rem;
+  font-weight: 700;
+}
+
+.title--s {
+  font-size: var(--fs--2xl);
+  line-height: 2rem;
+  font-weight: 700;
+}
+
+.subtitle {
+  font-size: var(--fs--xl);
+  line-height: 1.75rem;
+  font-weight: 500;
+}
+
+.subtitle--s {
+  font-size: var(--fs--l);
+  line-height: 1.75rem;
+  font-weight: 500;
+}
+
+.paragraph {
+  font-size: var(--fs--m);
+  line-height: 1.5rem;
+  font-weight: 400;
+}
+
+.paragraph--s {
+  font-size: var(--fs--s);
+  line-height: 1.25rem;
+  font-weight: 400;
+}
+
+.paragraph--xs {
+  font-size: var(--fs--xs);
+  line-height: 1rem;
+  font-weight: 400;
+}
+
+.paragraph--xxs {
+  font-size: var(--fs--xxs);
+  line-height: 1rem;
+  font-weight: 400;
+}

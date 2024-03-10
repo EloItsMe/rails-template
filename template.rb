@@ -1,10 +1,44 @@
 REPO = "https://raw.githubusercontent.com/EloItsMe/rails-template/master"
 
 def set_up_stylesheets
-  remove_dir 'app/assets/stylesheets'
-  run "curl -L 'https://github.com/EloItsMe/rails-stylesheet-structure/archive/refs/tags/release.zip' > stylesheets.zip"
-  run "unzip stylesheets.zip && rm stylesheets.zip"
-  run "mv rails-stylesheet-structure-release app/assets/stylesheets"
+  remove_file "app/assets/stylesheets/application.sass.css"
+  run "curl -L #{REPO + "/template/app/assets/stylesheets/application.sass.scss"} > app/assets/stylesheets/application.sass.scss"
+
+  empty_directory 'app/assets/stylesheets/config'
+  run "curl -L #{REPO + "/template/app/assets/stylesheets/config/_breakpoints.scss"} > app/assets/stylesheets/config/_breakpoints.scss"
+  run "curl -L #{REPO + "/template/app/assets/stylesheets/config/_colors.scss"} > app/assets/stylesheets/config/_colors.scss"
+  run "curl -L #{REPO + "/template/app/assets/stylesheets/config/_typographies.scss"} > app/assets/stylesheets/config/_typographies.scss"
+  run "curl -L #{REPO + "/template/app/assets/stylesheets/config/_reset.scss"} > app/assets/stylesheets/config/_reset.scss"
+  run "curl -L #{REPO + "/template/app/assets/stylesheets/config/index.scss"} > app/assets/stylesheets/config/index.scss"
+
+  empty_directory 'app/assets/stylesheets/components'
+  run "curl -L #{REPO + "/template/app/assets/stylesheets/components/_button.scss"} > app/assets/stylesheets/components/_button.scss"
+  empty_directory 'app/assets/stylesheets/components/form'
+  run "curl -L #{REPO + "/template/app/assets/stylesheets/components/form/_input.scss"} > app/assets/stylesheets/components/form/_input.scss"
+  run "curl -L #{REPO + "/template/app/assets/stylesheets/components/form/_text.scss"} > app/assets/stylesheets/components/form/_text.scss"
+  run "curl -L #{REPO + "/template/app/assets/stylesheets/components/form/_wrapper.scss"} > app/assets/stylesheets/components/form/_wrapper.scss"
+  run "curl -L #{REPO + "/template/app/assets/stylesheets/components/form/_checkbox.scss"} > app/assets/stylesheets/components/form/_checkbox.scss"
+  run "curl -L #{REPO + "/template/app/assets/stylesheets/components/index.scss"} > app/assets/stylesheets/components/index.scss"
+  run "curl -L #{REPO + "/template/app/assets/stylesheets/components/index.scss"} > app/assets/stylesheets/components/index.scss"
+
+  empty_directory 'app/assets/stylesheets/externals'
+  run "curl -L #{REPO + "/template/app/assets/stylesheets/externals/index.scss"} > app/assets/stylesheets/externals/index.scss"
+
+  empty_directory 'app/assets/stylesheets/layouts'
+  run "curl -L #{REPO + "/template/app/assets/stylesheets/layouts/index.scss"} > app/assets/stylesheets/layouts/index.scss"
+
+  empty_directory 'app/assets/stylesheets/pages'
+  run "curl -L #{REPO + "/template/app/assets/stylesheets/pages/index.scss"} > app/assets/stylesheets/pages/index.scss"
+
+  empty_directory 'app/assets/stylesheets/utilities'
+  run "curl -L #{REPO + "/template/app/assets/stylesheets/utilities/_display.scss"} > app/assets/stylesheets/utilities/_display.scss"
+  run "curl -L #{REPO + "/template/app/assets/stylesheets/utilities/_margin.scss"} > app/assets/stylesheets/utilities/_margin.scss"
+  run "curl -L #{REPO + "/template/app/assets/stylesheets/utilities/_padding.scss"} > app/assets/stylesheets/utilities/_padding.scss"
+  run "curl -L #{REPO + "/template/app/assets/stylesheets/utilities/index.scss"} > app/assets/stylesheets/utilities/index.scss"
+end
+
+def set_up_assets
+  run "curl -L #{REPO + "/template/config/initializers/asset_url_processor.rb"} > config/initializers/asset_url_processor.rb"
 end
 
 def install_rubocop
@@ -317,6 +351,7 @@ end
 after_bundle do
   # Stylesheets
   set_up_stylesheets
+  set_up_assets
 
   # Linter
   install_rubocop
